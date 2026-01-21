@@ -23,7 +23,7 @@ class Informasi extends Model
         'ringkasan',
         'penjelasan',
         'pejabat_pj',
-        'waktu_tampat',
+        'waktu_tempat',
         'pj_penerbit_informasi',
         'format_informasi',
         'waktu_penyimpanan',

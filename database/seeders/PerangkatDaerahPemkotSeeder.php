@@ -89,7 +89,7 @@ class PerangkatDaerahPemkotSeeder extends Seeder
                     ['nama_perangkat_daerah' => $namaLengkapInstansi], // Kunci pencarian untuk anak
                     [
                         'labele_perangkat_daerah' => $namaLengkapInstansi,
-                        'kategori_informasi_id' => 3,
+                        'kategori_informasi_id' => 2,
                         'parent_id' => $parentKota->id, // Mengambil ID dari objek induk
                         'slug' => Str::slug($namaLengkapInstansi),
                         'images' => null, // Instansi tidak memiliki logo sendiri

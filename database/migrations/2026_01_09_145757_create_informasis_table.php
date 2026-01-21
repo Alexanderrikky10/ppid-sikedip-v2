@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->string('judul_informasi');
             $table->text('ringkasan');
             $table->longText('penjelasan')->nullable();
-            $table->string('waktu_tampat');
+            $table->string('waktu_tempat');
             $table->string('pj_penerbit_informasi');
             $table->string('pejabat_pj');
             $table->string('format_informasi');//bisa jadi di sini enum tergantung nanti mau di tambhakan apa lagi 
