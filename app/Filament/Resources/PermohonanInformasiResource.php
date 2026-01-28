@@ -99,7 +99,7 @@ class PermohonanInformasiResource extends Resource
                                 Forms\Components\FileUpload::make('scan_identitas')
                                     ->label('Scan Identitas (KTP/SIM)')
                                     ->image()
-                                    ->disk('minio')
+                                    ->disk(name: 'minio')
                                     ->directory('scan_identitas')
                                     ->imageEditor()
                                     ->imageEditorAspectRatios([
@@ -343,6 +343,14 @@ class PermohonanInformasiResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('lihat_dokumen')
+                        ->label('Lihat Berkas')
+                        ->icon('heroicon-o-paper-clip')
+                        ->color('info')
+                        ->modalContent(fn($record) => view('filament.resources.permohonan-informasi.view-file', ['record' => $record]))
+                        ->modalSubmitAction(false) // Hilangkan tombol "Submit" karena hanya view
+                        ->modalCancelActionLabel('Tutup')
+                        ->modalWidth('4xl'), // Lebar modal agar PDF enak dibaca
                     Tables\Actions\ViewAction::make()
                         ->icon('heroicon-o-eye'),
 

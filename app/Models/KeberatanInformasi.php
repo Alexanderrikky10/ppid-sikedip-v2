@@ -26,6 +26,10 @@ class KeberatanInformasi extends Model
         'status',
     ];
 
+    protected $casts = [
+        'alasan_keberatan' => 'array',
+    ];
+
     public function permohonanInformasi()
     {
         return $this->belongsTo(PermohonanInformasi::class, 'permohonan_informasi_id');

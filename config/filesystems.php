@@ -41,7 +41,7 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => rtrim(env('APP_URL'), '/').'/storage',
+            'url' => rtrim(env('APP_URL'), '/') . '/storage',
             'visibility' => 'public',
             'throw' => false,
             'report' => false,
@@ -59,6 +59,31 @@ return [
             'throw' => false,
             'report' => false,
         ],
+
+        'minio' => [
+            'driver' => 's3',
+            'key' => env('MINIO_KEY'),
+            'secret' => env('MINIO_SECRET'),
+            'region' => env('MINIO_REGION'),
+            'bucket' => env('MINIO_BUCKET'),
+            'endpoint' => env('MINIO_ENDPOINT'),
+            'url' => env('MINIO_URL'), // <-- TAMBAHKAN BARIS INI
+            'use_path_style_endpoint' => true,
+            'throw' => false,
+        ],
+
+        // 'minio' => [
+        //     'driver' => 's3',
+        //     'key' => env('MINIO_ACCESS_KEY'),
+        //     'secret' => env('MINIO_SECRET_KEY'),
+        //     'region' => env('MINIO_REGION', 'us-east-1'),
+        //     'bucket' => env('MINIO_BUCKET_NAME', 'sikedip'),
+        //     'endpoint' => env('MINIO_ENDPOINT'),
+        //     'url' => env('MINIO_URL'),
+        //     'use_path_style_endpoint' => env('MINIO_USE_PATH_STYLE_ENDPOINT', true),
+        //     'visibility' => 'public',
+        //     'throw' => true,
+        // ],
 
     ],
 

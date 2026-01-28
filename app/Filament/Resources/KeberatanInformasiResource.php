@@ -345,6 +345,14 @@ class KeberatanInformasiResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('lihat_detail')
+                        ->label('Lihat Berkas & Detail')
+                        ->icon('heroicon-o-document-text') // Icon dokumen
+                        ->color('info')
+                        ->modalContent(fn($record) => view('filament.resources.keberatan-informasi.view-file', ['record' => $record]))
+                        ->modalSubmitAction(false) // Read only
+                        ->modalCancelActionLabel('Tutup')
+                        ->modalWidth('5xl'), // Lebar ekstra karena ada info text + file
                     Tables\Actions\ViewAction::make()
                         ->icon('heroicon-o-eye'),
 

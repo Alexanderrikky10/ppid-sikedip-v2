@@ -36,9 +36,9 @@
                 </p>
 
                 <div class="flex flex-col sm:flex-row gap-3 w-full justify-center mb-8">
-                    <a href="/admin/login"
+                    <a href="{{ route('beranda.index') }}"
                         class="px-6 py-3 bg-black text-white font-semibold rounded shadow hover:bg-gray-800 transition text-center text-sm sm:text-base w-full sm:w-auto">
-                        Masuk
+                        Beranda
                     </a>
 
                     <a href="#"
