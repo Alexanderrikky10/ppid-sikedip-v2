@@ -17,7 +17,6 @@ class PerangkatDaerah extends Model
         'parent_id',
         'images',
     ];
-
     public function kategoriInformasi()
     {
         return $this->belongsTo(KategoriInformasi::class, 'kategori_informasi_id');

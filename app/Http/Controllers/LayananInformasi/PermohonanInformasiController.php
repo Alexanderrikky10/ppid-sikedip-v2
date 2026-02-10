@@ -5,6 +5,7 @@ namespace App\Http\Controllers\LayananInformasi;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\PerangkatDaerah;
+use App\Models\KategoriInformasi;
 use App\Http\Controllers\Controller;
 use App\Models\PermohonanInformasi; // Pastikan Model ini ada
 use Illuminate\Support\Facades\Storage; // Tambahkan ini untuk upload file
@@ -13,36 +14,19 @@ class PermohonanInformasiController extends Controller
 {
     public function index()
     {
-        // 1. Ambil Induk (Parent) dan Eager Load Children-nya
-        $parents = PerangkatDaerah::whereNull('parent_id')
-            ->with([
-                'children' => function ($query) {
-                    $query->orderBy('nama_perangkat_daerah', 'asc');
-                }
-            ])
-            ->orderBy('nama_perangkat_daerah', 'asc')
-            ->get();
-
-        // 2. Collection baru untuk menampung hasil urutan dropdown
-        $sortedPerangkatDaerah = collect();
-
-        foreach ($parents as $parent) {
-            $parent->setAttribute('is_header', true);
-            $sortedPerangkatDaerah->push($parent);
-
-            if ($parent->kategori_informasi_id == 2) {
-                continue;
+        // 1. Ambil Data Kategori Beserta Perangkat Daerah Utama & Anaknya
+        // Struktur: Kategori -> Perangkat Daerah (Induk) -> Children
+        $kategoriList = KategoriInformasi::with([
+            'perangkatDaerahs' => function ($q) {
+                $q->whereNull('parent_id') // Hanya ambil induk (Dinas Provinsi, Nama Kabupaten, Induk BUMD)
+                    ->with('children')       // Ambil juga anaknya (Bidang/UPT, Dinas Kab/Kota, Unit BUMD)
+                    ->orderBy('nama_perangkat_daerah', 'asc');
             }
+        ])->get();
 
-            // C. Masukkan ANAK-ANAKNYA (Untuk Pemprov, BUMD, dll)
-            foreach ($parent->children as $child) {
-                $child->setAttribute('is_header', false);
-                $sortedPerangkatDaerah->push($child);
-            }
-        }
-
+        // Kirim data yang sudah terstruktur ke View
         return view('content.layanan-informasi.permohonan-informasi', [
-            'perangkatDaerahs' => $sortedPerangkatDaerah
+            'opdList' => $kategoriList
         ]);
     }
     public function store(Request $request)

@@ -4,6 +4,8 @@ namespace App\Filament\Resources;
 
 use Filament\Forms;
 use Filament\Tables;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
@@ -12,8 +14,7 @@ use App\Models\PermohonanInformasi;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\KeberatanInformasiResource\Pages;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
+
 
 class KeberatanInformasiResource extends Resource
 {
@@ -147,12 +148,12 @@ class KeberatanInformasiResource extends Resource
                                         ->rows(2)
                                         ->columnSpanFull(),
                                     Forms\Components\FileUpload::make('surat_kuasa')
-                                        ->disk('minio')
                                         ->label('Upload Surat Kuasa')
                                         ->directory('keberatan-informasi')
                                         ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
                                         ->maxSize(2048)
                                         ->visibility('private')
+                                        ->disk('minio')
                                         ->requiredIf('nama_kuasa', 'filled'),
                                 ])->columns(2),
                         ]),

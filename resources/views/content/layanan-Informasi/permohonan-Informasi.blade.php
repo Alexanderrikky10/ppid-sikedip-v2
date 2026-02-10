@@ -111,6 +111,7 @@
                     </div>
                 </div>
 
+                {{-- BAGIAN SELECT PERANGKAT DAERAH (DIPERBARUI) --}}
                 <div class="mb-4">
                     <label for="perangkat_daerah_id" class="block text-sm font-semibold text-gray-700 mb-2">
                         OPD Tujuan <span class="text-red-500">*</span>
@@ -118,21 +119,38 @@
                     <select name="perangkat_daerah_id" required
                         class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all text-gray-900 bg-white @error('perangkat_daerah_id') border-red-500 @enderror">
                         <option value="" class="text-gray-500">-- Pilih Perangkat Daerah --</option>
-                        @foreach($perangkatDaerahs as $opd)
-                            @if($opd->is_header)
-                                <option value="{{ $opd->id }}" class="font-bold text-gray-900 bg-gray-100"
-                                    style="font-weight: bold; background-color: #f3f4f6; color: #111827;" {{ old('perangkat_daerah_id') == $opd->id ? 'selected' : '' }}>
-                                    ★★ {{ $opd->nama_perangkat_daerah }}
+
+                        {{-- LEVEL 1: Loop Kategori (Pemprov, Pemkab, BUMD) --}}
+                        @foreach($opdList as $kategori)
+                            {{-- Tampilkan Nama Kategori sebagai Group Label (Disabled) --}}
+                            <option disabled class="font-extrabold text-black bg-gray-200 py-2">
+                                ⭐⭐ {{ strtoupper($kategori->nama_kategori) }}
+                            </option>
+
+                            {{-- LEVEL 2: Loop Perangkat Daerah Induk (Dinas Prov, Nama Kabupaten, Induk BUMD) --}}
+                            @foreach($kategori->perangkatDaerahs as $parentOpd)
+                                <option value="{{ $parentOpd->id }}" 
+                                    class="font-bold text-gray-900 bg-gray-50"
+                                    {{ old('perangkat_daerah_id') == $parentOpd->id ? 'selected' : '' }}>
+                                    &nbsp;&nbsp;★ {{ $parentOpd->nama_perangkat_daerah }}
                                 </option>
-                            @else
-                                <option value="{{ $opd->id }}" class="text-gray-700 bg-white" style="padding-left: 20px;" {{ old('perangkat_daerah_id') == $opd->id ? 'selected' : '' }}>
-                                    &nbsp;&nbsp;&nbsp;&nbsp; {{ $opd->nama_perangkat_daerah }}
-                                </option>
-                            @endif
+
+                                {{-- LEVEL 3: Loop Sub Perangkat Daerah (Children) --}}
+                                {{-- LOGIKA: Tampilkan anak HANYA JIKA Kategori BUKAN "Pemkab/Kota" (ID 2) --}}
+                                @if($kategori->id != 2 && $parentOpd->children->isNotEmpty())
+                                    @foreach($parentOpd->children as $childOpd)
+                                        <option value="{{ $childOpd->id }}" 
+                                            class="text-gray-600 bg-white"
+                                            {{ old('perangkat_daerah_id') == $childOpd->id ? 'selected' : '' }}>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├─ {{ $childOpd->nama_perangkat_daerah }}
+                                        </option>
+                                    @endforeach
+                                @endif
+                            @endforeach
                         @endforeach
                     </select>
                     @error('perangkat_daerah_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                </div>
+                </div>  
             </div>
 
             {{-- 2. Jenis Pemohon --}}
@@ -432,7 +450,7 @@
                             <i class="fas fa-arrow-left"></i>
                             <span>Kembali</span>
                         </a>
-                        <a type="button" href="{{ route('permohonan-informasi') }}"
+                        <a type="button" href="{{ url()->current() }}"
                             class="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-all inline-flex items-center gap-2">
                             <i class="fas fa-redo"></i>
                             <span>Reset</span>

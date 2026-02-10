@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\PermohonanInformasiResource\Pages;
-use App\Filament\Resources\PermohonanInformasiResource\RelationManagers;
 use App\Models\PermohonanInformasi;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -12,7 +11,6 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-
 class PermohonanInformasiResource extends Resource
 {
     protected static ?string $model = PermohonanInformasi::class;
@@ -99,9 +97,9 @@ class PermohonanInformasiResource extends Resource
                                 Forms\Components\FileUpload::make('scan_identitas')
                                     ->label('Scan Identitas (KTP/SIM)')
                                     ->image()
-                                    ->disk(name: 'minio')
-                                    ->directory('scan_identitas')
+                                    ->directory('scan-identitas')
                                     ->imageEditor()
+                                    ->maxSize(2048)
                                     ->imageEditorAspectRatios([
                                         null,
                                         '16:9',
@@ -109,6 +107,7 @@ class PermohonanInformasiResource extends Resource
                                         '1:1',
                                     ])
                                     ->visibility('private')
+                                    ->disk('minio')
                                     ->maxSize(2048)
                                     ->acceptedFileTypes(['image/jpeg', 'image/png', 'application/pdf'])
                                     ->helperText('Upload scan KTP/SIM (max 2MB, format: JPG, PNG, PDF)')
@@ -177,8 +176,10 @@ class PermohonanInformasiResource extends Resource
                                     ->label('Dokumen Pendukung (Opsional)')
                                     ->helperText('Upload dokumen pendukung jika ada ( PDF max 5MB)')
                                     ->visibility('private')
-                                    ->directory('dokumen_tambahan')
                                     ->disk('minio')
+                                    ->acceptedFileTypes(['application/pdf'])
+                                    ->directory('dokumen-tambahan')
+                                    ->maxSize(5120)
                                     ->columnSpanFull(),
 
                                 Forms\Components\TextInput::make('cara_penyampaian_informasi')
@@ -376,9 +377,9 @@ class PermohonanInformasiResource extends Resource
                             Forms\Components\FileUpload::make('dokumen_informasi')
                                 ->label('Dokumen Informasi')
                                 ->multiple()
-                                ->disk('minio')
                                 ->directory('dokumen-informasi')
                                 ->visibility('private')
+                                ->disk('minio')
                                 ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
                                 ->maxSize(5120)
                                 ->helperText('Upload dokumen informasi jika ada (maksimal 5MB per file)')

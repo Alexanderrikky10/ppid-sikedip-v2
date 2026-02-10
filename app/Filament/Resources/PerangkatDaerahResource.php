@@ -2,15 +2,16 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\PerangkatDaerahResource\Pages;
-use App\Models\PerangkatDaerah;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
+use App\Models\PerangkatDaerah;
+use Filament\Resources\Resource;
+use Illuminate\Support\Facades\Http;
+use App\Filament\Resources\PerangkatDaerahResource\Pages;
+
 
 class PerangkatDaerahResource extends Resource
 {
@@ -89,9 +90,9 @@ class PerangkatDaerahResource extends Resource
                                 Forms\Components\FileUpload::make('images')
                                     ->label('Logo Instansi')
                                     ->image()
-                                    ->disk('minio') // Sesuaikan disk
-                                    ->directory('logo-perangkat-daerah')
+                                    ->maxSize(10240) // 10 MB
                                     ->visibility('private')
+                                    ->disk('minio')
                                     ->imageEditor()
                                     ->columnSpanFull(),
 
@@ -114,9 +115,10 @@ class PerangkatDaerahResource extends Resource
                 // Kolom Gambar/Logo
                 Tables\Columns\ImageColumn::make('images')
                     ->label('Logo')
-                    ->disk('minio')
                     ->visibility('private')
-                    ->circular(),
+                    ->disk('minio')
+                    ->rounded()
+                    ->size(50),
 
                 Tables\Columns\TextColumn::make('nama_perangkat_daerah')
                     ->label('Nama Perangkat Daerah')

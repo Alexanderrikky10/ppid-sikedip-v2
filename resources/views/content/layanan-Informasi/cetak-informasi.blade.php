@@ -6,10 +6,8 @@
         <div class="absolute inset-0 opacity-10"
             style="background-image: radial-gradient(#dcfce7 1px, transparent 1px); background-size: 24px 24px;"></div>
 
-        {{-- Perubahan di sini: menambahkan text-center --}}
         <div class="container mx-auto px-6 relative z-10 text-center">
             <h1 class="text-3xl font-bold mb-2">Laporan Daftar Informasi</h1>
-            {{-- Menambahkan max-w-2xl dan mx-auto agar teks deskripsi tidak terlalu lebar dan tetap di tengah --}}
             <p class="text-green-100 opacity-90 text-sm max-w-2xl mx-auto">
                 Filter dan cetak laporan daftar informasi publik sesuai kebutuhan Anda.
             </p>
@@ -21,7 +19,8 @@
         <div class="container mx-auto px-6">
 
             {{-- Form Wrapper --}}
-            <form action="#" method="POST"> {{-- Jangan lupa set route action --}}
+            {{-- Action mengarah ke route cetak PDF --}}
+            <form action="{{ route('cetak.informasi.pdf') }}" method="GET" target="_blank">
                 @csrf
 
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -50,12 +49,13 @@
                                                 class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                                                 <i class="fa-regular fa-calendar"></i>
                                             </div>
-                                            <select name="start_year"
+                                            {{-- Name disesuaikan dengan Controller: tahun_awal --}}
+                                            <select name="tahun_awal"
                                                 class="w-full pl-10 pr-4 py-2.5 rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500 shadow-sm transition-colors cursor-pointer bg-white">
                                                 <option value="" disabled selected>Pilih Tahun...</option>
-                                                @for ($i = date('Y'); $i >= 2015; $i--)
-                                                    <option value="{{ $i }}">{{ $i }}</option>
-                                                @endfor
+                                                @foreach($tahunList as $thn)
+                                                    <option value="{{ $thn }}">{{ $thn }}</option>
+                                                @endforeach
                                             </select>
                                         </div>
                                     </div>
@@ -69,12 +69,13 @@
                                                 class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                                                 <i class="fa-regular fa-calendar-check"></i>
                                             </div>
-                                            <select name="end_year"
+                                            {{-- Name disesuaikan dengan Controller: tahun_akhir --}}
+                                            <select name="tahun_akhir" required
                                                 class="w-full pl-10 pr-4 py-2.5 rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500 shadow-sm transition-colors cursor-pointer bg-white">
                                                 <option value="" disabled selected>Pilih Tahun...</option>
-                                                @for ($i = date('Y'); $i >= 2015; $i--)
-                                                    <option value="{{ $i }}">{{ $i }}</option>
-                                                @endfor
+                                                @foreach($tahunList as $thn)
+                                                    <option value="{{ $thn }}">{{ $thn }}</option>
+                                                @endforeach
                                             </select>
                                         </div>
                                     </div>
@@ -89,13 +90,37 @@
                                             class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                                             <i class="fa-solid fa-building-columns"></i>
                                         </div>
-                                        <select name="agency_id"
+                                        {{-- Name disesuaikan: perangkat_daerah_id --}}
+                                        <select name="perangkat_daerah_id"
                                             class="w-full pl-10 pr-4 py-2.5 rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500 shadow-sm transition-colors cursor-pointer bg-white">
-                                            <option value="" disabled selected>Semua Perangkat Daerah</option>
-                                            <option value="1">Dinas Komunikasi dan Informatika</option>
-                                            <option value="2">Dinas Kesehatan</option>
-                                            <option value="3">Dinas Pendidikan</option>
-                                            {{-- Tambahkan opsi lain sesuai database --}}
+                                            <option value="">Semua Perangkat Daerah</option>
+
+                                            {{-- Loop Hierarchy OPD --}}
+                                            @foreach($opdList as $kategori)
+                                                {{-- 1. Tampilkan Nama Kategori --}}
+                                                <option disabled class="font-extrabold text-black bg-gray-100">
+                                                    ⭐⭐ {{ strtoupper($kategori->nama_kategori) }}
+                                                </option>
+
+                                                @foreach($kategori->perangkatDaerahs as $parentOpd)
+                                                    {{-- 2. Tampilkan Parent (Induk) --}}
+                                                    <option value="{{ $parentOpd->id }}" class="font-bold text-gray-800">
+                                                        &nbsp;&nbsp;★ {{ $parentOpd->nama_perangkat_daerah }}
+                                                    </option>
+
+                                                    {{-- 3. Tampilkan Children (Anak) --}}
+                                                    {{-- Perubahan: Menghapus pengecualian kategori ID 2, sekarang cukup cek apakah
+                                                    punya anak --}}
+                                                    @if($parentOpd->children->isNotEmpty())
+                                                        @foreach($parentOpd->children as $childOpd)
+                                                            <option value="{{ $childOpd->id }}" class="text-gray-600">
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├─
+                                                                {{ $childOpd->nama_perangkat_daerah }}
+                                                            </option>
+                                                        @endforeach
+                                                    @endif
+                                                @endforeach
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>
@@ -119,12 +144,15 @@
                                         <label
                                             class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Kategori
                                             Informasi</label>
-                                        <select name="category_id"
+                                        {{-- Name: kategori_informasi_id --}}
+                                        <select name="kategori_informasi_id"
                                             class="w-full px-4 py-2.5 rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500 shadow-sm bg-white text-sm">
                                             <option value="">Semua Kategori</option>
-                                            <option value="berkala">Informasi Berkala</option>
-                                            <option value="serta-merta">Serta Merta</option>
-                                            <option value="setiap-saat">Setiap Saat</option>
+                                            {{-- Asumsi Anda mengirim $kategoriInformasiList dari controller --}}
+                                            {{-- Jika belum ada, bisa hardcode atau ambil dari DB --}}
+                                            <option value="1">Pemerintah Provinsi</option>
+                                            <option value="2">Pemerintah Kabupaten/Kota</option>
+                                            <option value="3">BUMD</option>
                                         </select>
                                     </div>
 
@@ -133,11 +161,14 @@
                                         <label
                                             class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Klasifikasi
                                             Informasi</label>
-                                        <select name="classification_id"
+                                        {{-- Name: klasifikasi_informasi_id --}}
+                                        <select name="klasifikasi_informasi_id"
                                             class="w-full px-4 py-2.5 rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500 shadow-sm bg-white text-sm">
                                             <option value="">Semua Klasifikasi</option>
-                                            <option value="publik">Publik</option>
-                                            <option value="dikecualikan">Dikecualikan</option>
+                                            @foreach($klasifikasilist as $klasifikasi)
+                                                <option value="{{ $klasifikasi->id }}">{{ $klasifikasi->nama_klasifikasi }}
+                                                </option>
+                                            @endforeach
                                         </select>
                                     </div>
 
@@ -146,11 +177,15 @@
                                         <label
                                             class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Jenis
                                             Informasi</label>
-                                        <select name="type_id"
+                                        {{-- Name: kategori_jenis_informasi_id --}}
+                                        <select name="kategori_jenis_informasi_id"
                                             class="w-full px-4 py-2.5 rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500 shadow-sm bg-white text-sm">
                                             <option value="">Semua Jenis</option>
-                                            <option value="dokumen">Dokumen</option>
-                                            <option value="agenda">Agenda Kegiatan</option>
+                                            @foreach($kategoriList as $kat)
+                                                <option value="{{ $kat->id }}">
+                                                    {{ $kat->nama_jenis_informasi ?? $kat->nama_kategori }}
+                                                </option>
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>
@@ -180,7 +215,8 @@
                                             class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                                             <i class="fa-solid fa-map-pin"></i>
                                         </div>
-                                        <input type="text" name="print_location" placeholder="Cth: Pontianak"
+                                        {{-- Name: tempat --}}
+                                        <input type="text" name="tempat" value="Pontianak" placeholder="Cth: Pontianak"
                                             class="w-full pl-10 pr-4 py-2.5 rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500 shadow-sm"
                                             required>
                                     </div>
@@ -194,7 +230,8 @@
                                             class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                                             <i class="fa-regular fa-calendar-days"></i>
                                         </div>
-                                        <input type="date" name="print_date" value="{{ date('Y-m-d') }}"
+                                        {{-- Name: tanggal --}}
+                                        <input type="date" name="tanggal" value="{{ date('Y-m-d') }}"
                                             class="w-full pl-10 pr-4 py-2.5 rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500 shadow-sm text-gray-600">
                                     </div>
                                 </div>
@@ -203,10 +240,19 @@
 
                                 {{-- Action Buttons --}}
                                 <div class="space-y-3 pt-2">
-                                    <button type="submit"
+                                    {{-- Tombol Cetak PDF --}}
+                                    <button type="submit" formaction="{{ route('cetak.informasi.pdf') }}"
                                         class="w-full flex items-center justify-center bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition-all transform hover:scale-[1.02] duration-200 group">
                                         <i class="fa-solid fa-file-pdf mr-2 group-hover:animate-bounce"></i>
-                                        Cetak Laporan
+                                        Download PDF
+                                    </button>
+
+                                    {{-- Tombol Print View (Opsional, jika ingin lihat di browser dulu) --}}
+                                    <button type="submit" formaction="{{ route('cetak.informasi.laporan') }}"
+                                        formtarget="_blank"
+                                        class="w-full flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition-all transform hover:scale-[1.02] duration-200">
+                                        <i class="fa-solid fa-print mr-2"></i>
+                                        Lihat / Print
                                     </button>
 
                                     <button type="reset"

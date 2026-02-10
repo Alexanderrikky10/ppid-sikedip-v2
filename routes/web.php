@@ -1,13 +1,20 @@
 <?php
 
-use App\Http\Controllers\LayananInformasi\CetakInformasiUserController;
-use App\Http\Controllers\LayananInformasi\TataCaraController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MinioUploadController;
+use App\Http\Controllers\Admin\BerandaController;
 use App\Http\Controllers\Beranda\BerandaUserController;
 use App\Http\Controllers\Cetak\CetakInformasiController;
 use App\Http\Controllers\WelcomePage\WelcomePageController;
+use App\Http\Controllers\LayananInformasi\TataCaraController;
+use App\Http\Controllers\DaftarInformasi\DaftarInformasiController;
+use App\Http\Controllers\DaftarInformasi\DaftarInformasiBumdController;
+use App\Http\Controllers\LayananInformasi\CetakInformasiUserController;
 use App\Http\Controllers\LayananInformasi\KeberatanInformasiController;
 use App\Http\Controllers\LayananInformasi\PermohonanInformasiController;
+use App\Http\Controllers\DaftarInformasi\DaftarInformasiDetailController;
+use App\Http\Controllers\DaftarInformasi\DaftarInformasiPemkabController;
+use App\Http\Controllers\DaftarInformasi\DaftarInformasiPemprovController;
 
 
 // wecome page route
@@ -17,6 +24,10 @@ Route::get('/', [WelcomePageController::class, 'welcome'])
 // beranda user route
 Route::get('/beranda', [BerandaUserController::class, 'index'])
     ->name('beranda.index');
+
+// daftar informasi route
+Route::get('/daftar-informasi-publik', [DaftarInformasiController::class, 'index'])
+    ->name('daftar-informasi-publik');
 
 // layanan informasi route
 Route::get('/permohonan-informasi', [PermohonanInformasiController::class, 'index'])->name('permohonan-informasi');
@@ -37,6 +48,29 @@ Route::get('/cetak-informasi', [CetakInformasiUserController::class, 'index'])->
 Route::get('/get-permohonan-by-nik', [KeberatanInformasiController::class, 'getPermohonanByNik'])->name('ajax.get-permohonan');
 
 
+// daftar informasi pemprov route
+Route::get('/daftar-informasi/pemprov/{tahun}', [DaftarInformasiPemprovController::class, 'index'])
+    ->name('daftar-informasi.pemprov');
+Route::get('/daftar-informasi/pemprov', [DaftarInformasiPemprovController::class, 'instansiPemprov'])
+    ->name('daftar-informasi.instansi');
+Route::get('daftar-informasi/{slug}', [DaftarInformasiPemprovController::class, 'pemprovList'])->name('daftar-informasi-pemprov.list');
+
+// daftar informasi pemkab route
+Route::get('/daftar-informasi-pemkab', [DaftarInformasiPemkabController::class, 'index'])->name('daftar-informasi.pemkab');
+Route::get('/daftar-informasi/pemkab/{slug}', [DaftarInformasiPemkabController::class, 'pemkabList'])->name('daftar-informasi-pemkab.list');
+
+//daftar informasi bumd route
+Route::get('/daftar-informasi-bumd', [DaftarInformasiBumdController::class, 'index'])->name('daftar-informasi.bumd');
+Route::get('/daftar-informasi/bumd/{slug}', [DaftarInformasiBumdController::class, 'bumdList'])->name('daftar-informasi-bumd.list');
+
+//detail informasi 
+Route::get('/detail-informasi/{id}', [DaftarInformasiDetailController::class, 'show'])->name('detail.show');
+Route::get('/detail-informasi/baca/{slug}', [DaftarInformasiDetailController::class, 'detailPage'])->name('detail.read');
+
+// download file 
+Route::get('/informasi/download/{slug}', [DaftarInformasiDetailController::class, 'downloadFile'])->name('informasi.download');
+
+
 
 // cetak informasi routes
 Route::get('/cetak-informasi/laporan', [CetakInformasiController::class, 'print'])
@@ -49,3 +83,16 @@ Route::get('/cetak-informasi/excel', [CetakInformasiController::class, 'download
     ->name('cetak.informasi.excel');
 
 
+
+
+// * Routes for MinIO file operations
+Route::middleware(['auth'])->group(function () {
+    Route::post('/minio/upload', [MinioUploadController::class, 'upload'])
+        ->name('minio.upload');
+
+    Route::post('/minio/delete', [MinioUploadController::class, 'delete'])
+        ->name('minio.delete');
+
+    Route::post('/minio/get-url', [MinioUploadController::class, 'getUrl'])
+        ->name('minio.getUrl');
+});

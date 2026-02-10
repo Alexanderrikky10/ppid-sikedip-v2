@@ -53,6 +53,11 @@ class Informasi extends Model
     {
         return $this->belongsTo(KategoriInformasi::class, 'kategori_informasi_id');
     }
+    // Accessor untuk mengubah string format "PDF,Excel" menjadi Array
+    public function getFormatArrayAttribute()
+    {
+        return $this->format_informasi ? array_map('trim', explode(',', $this->format_informasi)) : [];
+    }
 
 }
 

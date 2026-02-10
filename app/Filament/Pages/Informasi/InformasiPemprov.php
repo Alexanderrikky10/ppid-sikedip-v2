@@ -2,21 +2,21 @@
 
 namespace App\Filament\Pages\Informasi;
 
-use Filament\Pages\Page;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Tables;
-use Filament\Tables\Table;
-use Filament\Tables\Concerns\InteractsWithTable;
-use Filament\Tables\Contracts\HasTable;
-use Filament\Tables\Enums\ActionsPosition;
-use Filament\Notifications\Notification;
+use Filament\Forms\Form;
+use Filament\Pages\Page;
 use App\Models\Informasi;
-use App\Models\KategoriInformasi;
+use Filament\Tables\Table;
 use Illuminate\Support\Str;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Notifications\Notification;
+use Filament\Forms\Components\FileUpload;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Enums\ActionsPosition;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Tables\Concerns\InteractsWithTable;
 
 class InformasiPemprov extends Page implements HasForms, HasTable
 {
@@ -150,12 +150,12 @@ class InformasiPemprov extends Page implements HasForms, HasTable
                                 ->required()
                                 ->columnSpanFull(),
 
-                            Forms\Components\FileUpload::make('media')
+                            FileUpload::make('media')
                                 ->label('Lampiran Media')
-                                ->disk('public')
                                 ->directory('informasi-pemprov')
                                 ->visibility('private')
-                                ->required()
+                                ->disk('minio')
+                                ->maxSize(10240) // 10 MB
                                 ->columnSpanFull(),
                         ])
                         ->columns(1),
