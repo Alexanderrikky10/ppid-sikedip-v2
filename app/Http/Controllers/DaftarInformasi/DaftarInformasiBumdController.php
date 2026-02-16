@@ -27,7 +27,6 @@ class DaftarInformasiBumdController extends Controller
         }
 
         // 3. Urutkan dan Ambil Data
-        // PERUBAHAN: Nama variabel diganti dari $PemkabUtama menjadi $BumdUtama
         $BumdUtama = $query->orderBy('nama_perangkat_daerah', 'asc')->get();
 
         // 4. Return View

@@ -149,7 +149,7 @@
                             <a href="#"
                                 class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors">Grafik
                                 Perangkat Daerah Kab/Kota</a>
-                            <a href="#"
+                            <a href="{{ route('grafik-bumd') }}"
                                 class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors">Grafik
                                 Perangkat Daerah BUMD</a>
                         </div>

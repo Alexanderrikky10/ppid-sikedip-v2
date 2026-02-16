@@ -1,8 +1,7 @@
 <?php
 
+use App\Http\Controllers\LaporanAnalisis\GrafikBumd;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\MinioUploadController;
-use App\Http\Controllers\Admin\BerandaController;
 use App\Http\Controllers\Beranda\BerandaUserController;
 use App\Http\Controllers\Cetak\CetakInformasiController;
 use App\Http\Controllers\WelcomePage\WelcomePageController;
@@ -63,6 +62,9 @@ Route::get('/daftar-informasi/pemkab/{slug}', [DaftarInformasiPemkabController::
 Route::get('/daftar-informasi-bumd', [DaftarInformasiBumdController::class, 'index'])->name('daftar-informasi.bumd');
 Route::get('/daftar-informasi/bumd/{slug}', [DaftarInformasiBumdController::class, 'bumdList'])->name('daftar-informasi-bumd.list');
 
+// laporan dan analisis route
+Route::get('/grafik-bumd',[GrafikBumd::class,'bumdGrafik'])->name('grafik-bumd');
+
 //detail informasi 
 Route::get('/detail-informasi/{id}', [DaftarInformasiDetailController::class, 'show'])->name('detail.show');
 Route::get('/detail-informasi/baca/{slug}', [DaftarInformasiDetailController::class, 'detailPage'])->name('detail.read');
@@ -82,17 +84,3 @@ Route::get('/cetak-informasi/pdf', [CetakInformasiController::class, 'downloadPd
 Route::get('/cetak-informasi/excel', [CetakInformasiController::class, 'downloadExcel'])
     ->name('cetak.informasi.excel');
 
-
-
-
-// * Routes for MinIO file operations
-Route::middleware(['auth'])->group(function () {
-    Route::post('/minio/upload', [MinioUploadController::class, 'upload'])
-        ->name('minio.upload');
-
-    Route::post('/minio/delete', [MinioUploadController::class, 'delete'])
-        ->name('minio.delete');
-
-    Route::post('/minio/get-url', [MinioUploadController::class, 'getUrl'])
-        ->name('minio.getUrl');
-});
