@@ -45,7 +45,7 @@
                                 Tahun</label>
                             <select name="dari_tahun"
                                 class="rounded-xl border-none bg-green-800/40 text-white text-sm font-bold focus:ring-green-400 backdrop-blur-sm shadow-inner cursor-pointer">
-                                @foreach(range(2020, date('Y')) as $year)
+                                @foreach(range(2017, date('Y')) as $year)
                                     <option class="text-slate-800" value="{{ $year }}" {{ $dariTahun == $year ? 'selected' : '' }}>{{ $year }}</option>
                                 @endforeach
                             </select>
@@ -60,7 +60,7 @@
                                 Tahun</label>
                             <select name="sampai_tahun"
                                 class="rounded-xl border-none bg-green-800/40 text-white text-sm font-bold focus:ring-green-400 backdrop-blur-sm shadow-inner cursor-pointer">
-                                @foreach(range(2020, date('Y')) as $year)
+                                @foreach(range(2017, date('Y')) as $year)
                                     <option class="text-slate-800" value="{{ $year }}" {{ $sampaiTahun == $year ? 'selected' : '' }}>{{ $year }}</option>
                                 @endforeach
                             </select>

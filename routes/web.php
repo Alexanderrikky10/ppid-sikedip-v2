@@ -1,19 +1,22 @@
 <?php
 
-use App\Http\Controllers\LaporanAnalisis\GrafikBumd;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Beranda\BerandaUserController;
 use App\Http\Controllers\Cetak\CetakInformasiController;
-use App\Http\Controllers\WelcomePage\WelcomePageController;
-use App\Http\Controllers\LayananInformasi\TataCaraController;
-use App\Http\Controllers\DaftarInformasi\DaftarInformasiController;
 use App\Http\Controllers\DaftarInformasi\DaftarInformasiBumdController;
-use App\Http\Controllers\LayananInformasi\CetakInformasiUserController;
-use App\Http\Controllers\LayananInformasi\KeberatanInformasiController;
-use App\Http\Controllers\LayananInformasi\PermohonanInformasiController;
+use App\Http\Controllers\DaftarInformasi\DaftarInformasiController;
 use App\Http\Controllers\DaftarInformasi\DaftarInformasiDetailController;
 use App\Http\Controllers\DaftarInformasi\DaftarInformasiPemkabController;
 use App\Http\Controllers\DaftarInformasi\DaftarInformasiPemprovController;
+use App\Http\Controllers\LaporanAnalisis\GrafikBumd;
+use App\Http\Controllers\LaporanAnalisis\GrafikPemkabKota;
+use App\Http\Controllers\LaporanAnalisis\grafikPemprov;
+use App\Http\Controllers\LayananInformasi\CetakInformasiUserController;
+use App\Http\Controllers\LayananInformasi\KeberatanInformasiController;
+use App\Http\Controllers\LayananInformasi\PermohonanInformasiController;
+use App\Http\Controllers\LayananInformasi\SurveyKualitasController;
+use App\Http\Controllers\LayananInformasi\TataCaraController;
+use App\Http\Controllers\WelcomePage\WelcomePageController;
+use Illuminate\Support\Facades\Route;
 
 
 // wecome page route
@@ -41,6 +44,10 @@ Route::post('/keberatan-informasi', [KeberatanInformasiController::class, 'store
 // route tata cara layanan informasi
 Route::get('/tata-cara-layanan-informasi', [TataCaraController::class, 'index'])->name('tata-cara-layanan-informasi');
 
+// route survey kualitas layanan informasi
+Route::get('/survey-kualitas-layanan-informasi', [SurveyKualitasController::class, 'surveyKualitas'])->name('survey-kualitas-informasi');
+Route::post('/survey-kualitas-layanan-informasi', [SurveyKualitasController::class, 'store'])->name('survey-kualitas-informasi.store');
+
 // route cetak informasi
 Route::get('/cetak-informasi', [CetakInformasiUserController::class, 'index'])->name('cetak-informasi');
 // Route untuk mengambil data permohonan via AJAX berdasarkan NIK
@@ -63,7 +70,9 @@ Route::get('/daftar-informasi-bumd', [DaftarInformasiBumdController::class, 'ind
 Route::get('/daftar-informasi/bumd/{slug}', [DaftarInformasiBumdController::class, 'bumdList'])->name('daftar-informasi-bumd.list');
 
 // laporan dan analisis route
-Route::get('/grafik-bumd',[GrafikBumd::class,'bumdGrafik'])->name('grafik-bumd');
+Route::get('/grafik-bumd', [GrafikBumd::class, 'bumdGrafik'])->name('grafik-bumd');
+Route::get('/grafik-pemkab', [GrafikPemkabKota::class, 'grafikPemkabKota'])->name('grafik-pemkabkota');
+Route::get('/grafik-pemprov', [grafikPemprov::class, 'grafikPemprov'])->name('grafik-pemprov');
 
 //detail informasi 
 Route::get('/detail-informasi/{id}', [DaftarInformasiDetailController::class, 'show'])->name('detail.show');

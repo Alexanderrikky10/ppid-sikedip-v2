@@ -115,9 +115,11 @@ class InformasiSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+
+            // kabkota
             [
                 'tahun' => 2024,
-                'perangkat_daerah_id' => 2, // Asumsi ID 2 adalah Perangkat Daerah Kab/Kota
+                'perangkat_daerah_id' => 48, // Asumsi ID 2 adalah Perangkat Daerah Kab/Kota
                 'klasifikasi_informasi_id' => 1, // Publik
                 'kategori_jenis_informasi_id' => 4, // Keuangan
                 'kategori_informasi_id' => 2, // KABUPATEN/KOTA
@@ -137,7 +139,7 @@ class InformasiSeeder extends Seeder
             ],
             [
                 'tahun' => 2023,
-                'perangkat_daerah_id' => 2,
+                'perangkat_daerah_id' => 48,
                 'klasifikasi_informasi_id' => 1, // Publik
                 'kategori_jenis_informasi_id' => 2, // Peraturan/Kebijakan
                 'kategori_informasi_id' => 2, // KABUPATEN/KOTA
@@ -157,7 +159,7 @@ class InformasiSeeder extends Seeder
             ],
             [
                 'tahun' => 2024,
-                'perangkat_daerah_id' => 2,
+                'perangkat_daerah_id' => 48,
                 'klasifikasi_informasi_id' => 1,
                 'kategori_jenis_informasi_id' => 5, // Layanan
                 'kategori_informasi_id' => 2, // KABUPATEN/KOTA
