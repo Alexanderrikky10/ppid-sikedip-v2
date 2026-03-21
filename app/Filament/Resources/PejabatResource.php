@@ -3,19 +3,18 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\PejabatResource\Pages;
-use App\Filament\Resources\PejabatResource\RelationManagers;
 use App\Models\Pejabat;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class PejabatResource extends Resource
 {
     protected static ?string $model = Pejabat::class;
+
+    protected static ?int $navigationSort = 8;
 
     protected static ?string $navigationGroup = 'PERANGKAT DAERAH DAN PEJABAT'; // Grouping Menu
     protected static ?string $navigationLabel = 'Pejabat';

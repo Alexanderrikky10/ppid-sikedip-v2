@@ -14,17 +14,20 @@ use Illuminate\Database\Eloquent\Builder;
 
 class RespondenResource extends Resource
 {
+    protected static ?int $navigationSort = 12;
     protected static ?string $model = Responden::class;
 
     protected static ?string $navigationGroup = 'MANAJEMEN SURVEY';
 
+    protected static ?string $navigationLabel = 'Data Jawaban Responden';
+
+    protected static ?string $modelLabel = 'Data Jawaban Responden';
+
+    protected static ?string $pluralModelLabel = 'Data Jawaban Responden';
+
+
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
 
-    protected static ?string $navigationLabel = 'Survey Kualitas';
-
-    protected static ?string $modelLabel = 'Survey Kualitas';
-
-    protected static ?string $pluralModelLabel = 'Survey Kualitas';
 
     public static function form(Form $form): Form
     {

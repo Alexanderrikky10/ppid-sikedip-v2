@@ -2,70 +2,75 @@
 
 @section('content')
 
+    {{-- Link CSS Slider - Pastikan file ini ada di public/css/slider/ --}}
+    <link rel="stylesheet" href="{{ asset('css/slider/slider-home.css') }}">
+
     {{-- =======================================================================
-    BAGIAN 1: HERO SLIDER (Tema Hijau)
+    BAGIAN 1: HERO SECTION (Slider Gambar Saja)
     ======================================================================= --}}
-    <section x-data="{ 
-                                                activeSlide: 0, 
-                                                slides: [
-                                                    'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2070&auto=format&fit=crop', 
-                                                    'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop', 
-                                                    'https://images.unsplash.com/photo-1519681393798-3828fb4090bb?q=80&w=2070&auto=format&fit=crop'
-                                                ],
-                                                init() {
-                                                    setInterval(() => {
-                                                        this.activeSlide = (this.activeSlide + 1) % this.slides.length;
-                                                    }, 5000);
-                                                }
-                                            }"
-        class="relative w-full h-screen min-h-[600px] overflow-hidden flex items-center justify-center bg-gray-900">
+    <section class="hero-section relative overflow-hidden flex items-center justify-center bg-gray-900"
+        style="height: 100vh; min-height: 600px;">
 
-        {{-- Background Slider Images --}}
-        <template x-for="(slide, index) in slides" :key="index">
-            <div x-show="activeSlide === index" x-transition:enter="transition transform duration-1000 ease-in-out"
-                x-transition:enter-start="opacity-0 scale-105" x-transition:enter-end="opacity-100 scale-100"
-                x-transition:leave="transition transform duration-1000 ease-in-out"
-                x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-100"
-                class="absolute inset-0 w-full h-full">
-                <img :src="slide" alt="Background" class="w-full h-full object-cover">
-                {{-- Overlay Gelap --}}
-                <div class="absolute inset-0 bg-black/60"></div>
-            </div>
-        </template>
+        {{-- Background Slider Menggunakan Accessor media_urls dari Model --}}
+        <div class="hero-background-container absolute inset-0 w-full h-full z-0">
+            @if ($BerandaContent && !empty($BerandaContent->media_urls))
+                <div id="image-slider-wrapper" class="absolute inset-0 w-full h-full">
+                    @foreach ($BerandaContent->media_urls as $index => $url)
+                        <div class="hero-slider-item absolute inset-0 w-full h-full @if ($index === 0) active @endif"
+                            style="background-image: url('{{ $url }}'); background-size: cover; background-position: center; transition: opacity 1s ease-in-out;">
+                            {{-- Overlay Gelap agar teks terbaca tajam --}}
+                            <div class="absolute inset-0 bg-black/60"></div>
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                {{-- Fallback jika database kosong atau media_urls gagal di-generate --}}
+                <div class="absolute inset-0 bg-green-900 flex items-center justify-center">
+                    <div class="absolute inset-0 bg-black/50"></div>
+                    <img src="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2070"
+                        class="w-full h-full object-cover opacity-40">
+                </div>
+            @endif
+        </div>
 
-        {{-- Content Hero --}}
-        <div class="relative z-10 w-full max-w-5xl px-4 text-center mt-16">
-            <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6 drop-shadow-lg leading-tight">
-                Temukan Informasi Publik <br>
-                <span class="text-white">yang Anda Butuhkan</span>
+        {{-- Konten Teks --}}
+        <div class="hero-content relative z-10 w-full max-w-5xl px-4 text-center mt-16">
+            <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6 drop-shadow-xl leading-tight">
+                {{ $BerandaContent->title ?? 'Temukan Informasi Publik yang Anda Butuhkan' }}
             </h1>
 
-            <p class="text-lg text-gray-200 mb-10 max-w-2xl mx-auto font-light">
-                Akses data, dokumen, dan layanan informasi dari Pemerintah Provinsi Kalimantan Barat dengan mudah dan
-                transparan.
+            <p class="text-lg md:text-xl text-gray-200 mb-10 max-w-3xl mx-auto font-light drop-shadow-md">
+                {{ $BerandaContent->description ?? 'Akses data, dokumen, dan layanan informasi dari Pemerintah Provinsi Kalimantan Barat dengan mudah dan transparan.' }}
             </p>
 
             {{-- Search Bar --}}
-            <div class="relative max-w-2xl mx-auto group">
-                <span class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
-                    <i class="fas fa-search text-gray-400 text-lg"></i>
+            <div class="search-wrapper relative max-w-2xl mx-auto group">
+                <span
+                    class="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none text-gray-400 group-focus-within:text-green-500 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                    </svg>
                 </span>
-                <input type="text"
-                    class="block w-full pl-12 pr-6 py-4 rounded-full text-gray-900 bg-white/95 border-0 shadow-xl focus:ring-4 focus:ring-green-500/30 text-lg placeholder-gray-500 transition-all hover:bg-white"
-                    placeholder="Ketik kata kunci pencarian informasi...">
+                <input type="text" placeholder="Ketik kata kunci pencarian informasi..."
+                    class="block w-full pl-16 pr-6 py-5 rounded-full text-gray-900 bg-white border-none shadow-2xl focus:ring-4 focus:ring-green-500/30 text-lg placeholder-gray-500 transition-all outline-none">
             </div>
         </div>
 
         {{-- Scroll Down Indicator --}}
-        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce z-10">
             <a href="#layanan-section" class="text-white/70 hover:text-white transition-colors">
-                <i class="fas fa-chevron-down text-3xl"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                    stroke="currentColor" class="w-8 h-8">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                </svg>
             </a>
         </div>
     </section>
 
     {{-- =======================================================================
-    BAGIAN 2: LAYANAN INFORMASI & KARTU (Tema Hijau)
+    BAGIAN 2: LAYANAN INFORMASI (Tema Hijau)
     ======================================================================= --}}
     <section id="layanan-section" class="py-20 bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -204,7 +209,7 @@
                         <p class="text-gray-500 text-sm mb-6 flex-grow">
                             Berikan penilaian dan masukan untuk peningkatan kualitas layanan kami.
                         </p>
-                        <a href="#"
+                        <a href="{{ route('survey-kualitas-informasi') }}"
                             class="text-green-600 font-semibold text-sm flex items-center group-hover:text-green-800 transition-colors">
                             Isi Survei <i
                                 class="fas fa-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform"></i>
@@ -217,5 +222,31 @@
     </section>
 
     @include('layout-app.app.footer')
+
+    {{-- Script Slider Utama --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const slides = document.querySelectorAll('.hero-slider-item');
+            let currentSlide = 0;
+            const slideInterval = 5000; // Waktu perpindahan (5 detik)
+
+            // Jika slide tidak ada atau hanya 1, jangan jalankan slider
+            if (slides.length <= 1) return;
+
+            function nextSlide() {
+                // Hapus class active dari slide yang sekarang
+                slides[currentSlide].classList.remove('active');
+
+                // Pindah ke slide berikutnya (kembali ke 0 jika sudah di akhir)
+                currentSlide = (currentSlide + 1) % slides.length;
+
+                // Tambahkan class active ke slide baru
+                slides[currentSlide].classList.add('active');
+            }
+
+            // Jalankan fungsi perpindahan secara otomatis
+            setInterval(nextSlide, slideInterval);
+        });
+    </script>
 
 @endsection

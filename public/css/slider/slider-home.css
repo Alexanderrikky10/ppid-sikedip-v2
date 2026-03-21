@@ -1,0 +1,25 @@
+/* Container Dasar */
+.hero-background-container {
+    background-color: #111827; /* Fallback warna gelap */
+}
+
+/* Item Slider */
+.hero-slider-item {
+    position: absolute;
+    inset: 0;
+    opacity: 0; /* Semua disembunyikan dulu */
+    transition: opacity 1.5s ease-in-out; /* Efek halus saat ganti */
+    background-size: cover;
+    background-position: center;
+}
+
+/* Item yang memiliki class .active akan muncul */
+.hero-slider-item.active {
+    opacity: 1;
+    z-index: 10;
+}
+
+/* Overlay Gelap */
+.hero-slider-item div {
+    z-index: 11;
+}

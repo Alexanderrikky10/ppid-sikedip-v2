@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
 
 class PanduanPenyusunanDipResource extends Resource
 {
+    protected static ?int $navigationSort = 15;
     protected static ?string $model = PanduanPenyusunanDip::class;
     protected static ?string $navigationGroup = 'MANAJEMEN CONTENT';
 
@@ -127,9 +128,7 @@ class PanduanPenyusunanDipResource extends Resource
                 ])
                     ->icon('heroicon-m-ellipsis-vertical')
                     ->size('sm')
-                    ->color('gray')
-                    ->button()
-                    ->label('Aksi')
+                    ->label('')
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

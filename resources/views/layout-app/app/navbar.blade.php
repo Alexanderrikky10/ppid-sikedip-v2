@@ -140,7 +140,7 @@
                             x-transition:leave-end="opacity-0 translate-y-2"
                             class="absolute right-0 mt-0 w-64 bg-white rounded-xl shadow-xl py-2 z-50 ring-1 ring-black ring-opacity-5 origin-top-left"
                             style="display: none;">
-                            <a href=""
+                            <a href="{{ route('panduan-penyusunan-dip') }}"
                                 class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors">Panduan
                                 Penyusunan DIP</a>
                             <a href="{{ route('grafik-pemprov') }}"

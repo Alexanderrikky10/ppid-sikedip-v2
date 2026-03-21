@@ -20,7 +20,15 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'image', 
         'password',
+        'role',
+        'nip',
+        'hak_akses',
+        'perangkat_daerah_id',
+        'daerah',
+        'biro',
+        'keycloak_id',
     ];
 
     /**
@@ -44,5 +52,10 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function perangkatDaerah()
+    {
+        return $this->belongsTo(PerangkatDaerah::class, 'perangkat_daerah_id');
     }
 }

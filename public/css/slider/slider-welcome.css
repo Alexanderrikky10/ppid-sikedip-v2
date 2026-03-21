@@ -1,0 +1,81 @@
+/* =============================================
+       SLIDER FOTO (Background)
+       ============================================= */
+.bg-slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 1.2s ease-in-out;
+    z-index: 0;
+}
+
+.bg-slide.active {
+    opacity: 1;
+}
+
+/* =============================================
+       SLIDER TEKS (Overlay di atas foto)
+       ============================================= */
+.text-slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2.5rem;
+    opacity: 0;
+    transform: translateY(24px);
+    transition:
+        opacity 0.9s ease,
+        transform 0.9s ease;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.text-slide.active {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+/* Dots */
+.slider-dots {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.slider-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.35);
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    transition:
+        background 0.3s,
+        transform 0.3s;
+    padding: 0;
+}
+
+.slider-dot.active {
+    background: white;
+    transform: scale(1.3);
+}
+
+/* Progress bar slide */
+.slide-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: rgba(134, 239, 172, 0.8);
+    width: 0%;
+    transition: width linear;
+    z-index: 10;
+}

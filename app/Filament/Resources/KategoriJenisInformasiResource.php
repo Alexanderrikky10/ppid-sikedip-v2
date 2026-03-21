@@ -3,21 +3,19 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\KategoriJenisInformasiResource\Pages;
-use App\Filament\Resources\KategoriJenisInformasiResource\RelationManagers;
 use App\Models\KategoriJenisInformasi;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
 class KategoriJenisInformasiResource extends Resource
 {
     protected static ?string $navigationGroup = 'KATEGORI DAN TAG';
     protected static ?string $model = KategoriJenisInformasi::class;
-    protected static ?int $navigationSort = 6;
+    protected static ?int $navigationSort = 9;
     protected static ?string $navigationIcon = 'heroicon-o-tag';
     protected static ?string $navigationLabel = 'Jenis Informasi';
     protected static ?string $pluralModelLabel = 'Jenis Informasi';

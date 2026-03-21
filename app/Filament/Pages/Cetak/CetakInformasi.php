@@ -23,7 +23,7 @@ class CetakInformasi extends Page implements HasForms, HasTable
     use InteractsWithTable;
 
     protected static ?string $navigationIcon = 'heroicon-o-printer';
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 4;
     protected static ?string $navigationGroup = 'INFORMASI DAN CETAK';
     protected static ?string $title = 'Laporan Daftar Informasi';
     protected static string $view = 'filament.pages.cetak.cetak-informasi';

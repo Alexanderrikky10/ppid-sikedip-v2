@@ -23,7 +23,7 @@ class KeberatanInformasiResource extends Resource
     protected static ?string $navigationGroup = 'PERMOHONAN INFORMASI DAN KEBERATAN INFORMASI';
     protected static ?string $navigationLabel = 'Keberatan Informasi';
     protected static ?string $pluralModelLabel = 'Keberatan Informasi';
-
+    protected static ?int $navigationSort = 6;
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count();

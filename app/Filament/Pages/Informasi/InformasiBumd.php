@@ -26,7 +26,7 @@ class InformasiBumd extends Page implements HasForms, HasTable
     protected static ?string $navigationIcon = 'heroicon-o-building-library';
     protected static ?string $navigationLabel = 'Informasi BUMD';
     protected static ?string $navigationGroup = 'INFORMASI DAN CETAK';
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 3;
     protected static string $view = 'filament.pages.informasi.informasi-bumd';
 
     // Properti Data Form

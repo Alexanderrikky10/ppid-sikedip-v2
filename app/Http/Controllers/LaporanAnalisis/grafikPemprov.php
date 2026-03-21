@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\PerangkatDaerah;
 use App\Http\Controllers\Controller;
 
-class grafikPemprov extends Controller
+class GrafikPemprov extends Controller
 {
     //
     public function grafikPemprov(Request $request)

@@ -9,7 +9,8 @@ use App\Http\Controllers\DaftarInformasi\DaftarInformasiPemkabController;
 use App\Http\Controllers\DaftarInformasi\DaftarInformasiPemprovController;
 use App\Http\Controllers\LaporanAnalisis\GrafikBumd;
 use App\Http\Controllers\LaporanAnalisis\GrafikPemkabKota;
-use App\Http\Controllers\LaporanAnalisis\grafikPemprov;
+use App\Http\Controllers\LaporanAnalisis\GrafikPemprov;
+use App\Http\Controllers\LaporanAnalisis\PanduanDipController;
 use App\Http\Controllers\LayananInformasi\CetakInformasiUserController;
 use App\Http\Controllers\LayananInformasi\KeberatanInformasiController;
 use App\Http\Controllers\LayananInformasi\PermohonanInformasiController;
@@ -72,7 +73,8 @@ Route::get('/daftar-informasi/bumd/{slug}', [DaftarInformasiBumdController::clas
 // laporan dan analisis route
 Route::get('/grafik-bumd', [GrafikBumd::class, 'bumdGrafik'])->name('grafik-bumd');
 Route::get('/grafik-pemkab', [GrafikPemkabKota::class, 'grafikPemkabKota'])->name('grafik-pemkabkota');
-Route::get('/grafik-pemprov', [grafikPemprov::class, 'grafikPemprov'])->name('grafik-pemprov');
+Route::get('/grafik-pemprov', [GrafikPemprov::class, 'grafikPemprov'])->name('grafik-pemprov');
+Route::get('/panduan-penyusunan-dip', [PanduanDipController::class, 'panduanDip'])->name('panduan-penyusunan-dip');
 
 //detail informasi 
 Route::get('/detail-informasi/{id}', [DaftarInformasiDetailController::class, 'show'])->name('detail.show');
@@ -93,3 +95,4 @@ Route::get('/cetak-informasi/pdf', [CetakInformasiController::class, 'downloadPd
 Route::get('/cetak-informasi/excel', [CetakInformasiController::class, 'downloadExcel'])
     ->name('cetak.informasi.excel');
 
+// admin routes for testing 

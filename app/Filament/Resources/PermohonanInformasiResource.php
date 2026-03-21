@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class PermohonanInformasiResource extends Resource
 {
     protected static ?string $model = PermohonanInformasi::class;
-
+    protected static ?int $navigationSort = 5;
     protected static ?string $navigationGroup = 'PERMOHONAN INFORMASI DAN KEBERATAN INFORMASI';
 
     protected static ?string $navigationLabel = 'Permohonan Informasi';

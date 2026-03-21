@@ -3,21 +3,19 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\KlasifikasiInformasiResource\Pages;
-use App\Filament\Resources\KlasifikasiInformasiResource\RelationManagers;
 use App\Models\KlasifikasiInformasi;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
 class KlasifikasiInformasiResource extends Resource
 {
     protected static ?string $model = KlasifikasiInformasi::class;
 
-    protected static ?int $navigationSort = 7;
+    protected static ?int $navigationSort = 10;
 
     protected static ?string $navigationGroup = 'KATEGORI DAN TAG';
 

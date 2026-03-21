@@ -42,4 +42,9 @@ class PerangkatDaerah extends Model
         return $this->hasMany(PermohonanInformasi::class, 'perangkat_daerah_id');
     }
 
+    public function users()
+    {
+        return $this->hasMany(User::class, 'perangkat_daerah_id');
+    }
+
 }

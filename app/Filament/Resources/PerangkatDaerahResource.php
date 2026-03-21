@@ -9,7 +9,6 @@ use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use App\Models\PerangkatDaerah;
 use Filament\Resources\Resource;
-use Illuminate\Support\Facades\Http;
 use App\Filament\Resources\PerangkatDaerahResource\Pages;
 
 
@@ -17,7 +16,7 @@ class PerangkatDaerahResource extends Resource
 {
     protected static ?string $model = PerangkatDaerah::class;
 
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 7;
 
     protected static ?string $navigationGroup = 'PERANGKAT DAERAH DAN PEJABAT'; // Grouping Menu
 
@@ -117,7 +116,7 @@ class PerangkatDaerahResource extends Resource
                     ->label('Logo')
                     ->visibility('private')
                     ->disk('minio')
-                    ->rounded()
+                    ->circular()
                     ->size(50),
 
                 Tables\Columns\TextColumn::make('nama_perangkat_daerah')
