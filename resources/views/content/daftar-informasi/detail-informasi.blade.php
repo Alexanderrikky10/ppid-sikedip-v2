@@ -4,11 +4,15 @@
 
     {{-- DEFINISI URL FILE (Agar tidak ngetik ulang) --}}
     @php
-        // Membuat URL sementara yang valid selama 30 menit
-        $fileUrl = \Illuminate\Support\Facades\Storage::disk('minio')->temporaryUrl(
-            $info->media,
-            now()->addMinutes(30)
-        );
+        // Cek apakah file ada di MinIO sebelum membuat URL sementara
+        $fileExists = !empty($info->media) && \Illuminate\Support\Facades\Storage::disk('minio')->exists($info->media);
+
+        $fileUrl = $fileExists
+            ? \Illuminate\Support\Facades\Storage::disk('minio')->temporaryUrl(
+                $info->media,
+                now()->addMinutes(30)
+            )
+            : null;
     @endphp
 
     {{-- 1. HERO HEADER --}}
@@ -86,17 +90,31 @@
                                 <i class="fa-regular fa-file-lines text-green-600"></i> Pratinjau Dokumen
                             </h3>
 
-                            {{-- UBAH 1: Link Layar Penuh ke URL MinIO --}}
-                            <a href="{{ $fileUrl }}" target="_blank"
-                                class="text-sm text-green-600 hover:text-green-800 font-semibold flex items-center gap-1">
-                                <i class="fa-solid fa-expand"></i> Layar Penuh
-                            </a>
+                            {{-- Tombol Layar Penuh hanya muncul jika file ada --}}
+                            @if($fileExists)
+                                <a href="{{ $fileUrl }}" target="_blank"
+                                    class="text-sm text-green-600 hover:text-green-800 font-semibold flex items-center gap-1">
+                                    <i class="fa-solid fa-expand"></i> Layar Penuh
+                                </a>
+                            @endif
                         </div>
 
                         <div class="bg-gray-100 w-full h-[500px] flex items-center justify-center">
 
-                            {{-- UBAH 2: Source Iframe/Image ke URL MinIO --}}
-                            @if(in_array(strtolower($extension), ['pdf']))
+                            @if(!$fileExists)
+                                {{-- Kondisi: File tidak ada atau belum diunggah --}}
+                                <div class="text-center p-10">
+                                    <div
+                                        class="w-20 h-20 bg-orange-50 rounded-full flex items-center justify-center mx-auto mb-4 text-orange-400 text-3xl">
+                                        <i class="fa-solid fa-triangle-exclamation"></i>
+                                    </div>
+                                    <p class="text-gray-700 font-semibold text-base mb-1">File Belum Tersedia</p>
+                                    <p class="text-sm text-gray-500 max-w-xs mx-auto">
+                                        Dokumen untuk informasi ini belum diunggah atau sedang dalam proses pengelolaan.
+                                        Silakan hubungi perangkat daerah terkait untuk informasi lebih lanjut.
+                                    </p>
+                                </div>
+                            @elseif(in_array(strtolower($extension), ['pdf']))
                                 <iframe src="{{ $fileUrl }}" class="w-full h-full" frameborder="0"></iframe>
                             @elseif(in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'webp']))
                                 <img src="{{ $fileUrl }}" class="max-w-full max-h-full object-contain" alt="Preview">
@@ -108,8 +126,6 @@
                                     </div>
                                     <p class="text-gray-600 font-medium">Pratinjau tidak tersedia untuk format ini.</p>
                                     <p class="text-sm text-gray-500">Silakan unduh file untuk melihat isinya.</p>
-
-                                    {{-- Tombol Download Kecil --}}
                                     <a href="{{ route('informasi.download', $info->slug) }}"
                                         class="mt-4 inline-block px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
                                         Unduh File
@@ -177,12 +193,14 @@
                                     <p class="text-xs text-gray-400 uppercase font-bold tracking-wider mb-1">Format</p>
                                     <span
                                         class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-gray-100 text-gray-700 uppercase">
-                                        {{ $extension }}
+                                        {{ $extension ?? '-' }}
                                     </span>
                                 </div>
                                 <div>
                                     <p class="text-xs text-gray-400 uppercase font-bold tracking-wider mb-1">Ukuran</p>
-                                    <span class="text-sm font-semibold text-gray-700">{{ $fileSize }}</span>
+                                    <span class="text-sm font-semibold text-gray-700">
+                                        {{ $fileExists ? $fileSize : '-' }}
+                                    </span>
                                 </div>
                             </div>
 
@@ -197,12 +215,19 @@
                         </div>
 
                         <div class="mt-8 pt-6 border-t border-gray-100">
-                            {{-- UBAH 3: Tombol Download Menggunakan Route Controller --}}
-                            {{-- 'download' attribute dihilangkan karena controller sudah mengirim header download --}}
-                            <a href="{{ route('informasi.download', $info->slug) }}"
-                                class="block w-full py-3 bg-green-600 hover:bg-green-700 text-white font-bold text-center rounded-xl shadow-lg shadow-green-200 transition-all transform hover:-translate-y-1">
-                                <i class="fa-solid fa-download mr-2"></i> Download File
-                            </a>
+                            @if($fileExists)
+                                {{-- Tombol Download hanya muncul jika file ada --}}
+                                <a href="{{ route('informasi.download', $info->slug) }}"
+                                    class="block w-full py-3 bg-green-600 hover:bg-green-700 text-white font-bold text-center rounded-xl shadow-lg shadow-green-200 transition-all transform hover:-translate-y-1">
+                                    <i class="fa-solid fa-download mr-2"></i> Download File
+                                </a>
+                            @else
+                                {{-- Tombol nonaktif jika file tidak ada --}}
+                                <div
+                                    class="block w-full py-3 bg-gray-200 text-gray-400 font-bold text-center rounded-xl cursor-not-allowed select-none">
+                                    <i class="fa-solid fa-ban mr-2"></i> File Tidak Tersedia
+                                </div>
+                            @endif
                         </div>
                     </div>
 
@@ -214,8 +239,14 @@
 
                         <div class="space-y-4">
                             @forelse($relatedInfos as $related)
-                                {{-- Pastikan route ini sesuai dengan route detail Anda (misal: informasi.detail) --}}
-                                <a href="{{ route('daftar-informasi.read', $related->slug) }}" class="block group">
+                                @php
+                                    $relatedUrl = Route::has('daftar-informasi.read')
+                                        ? route('daftar-informasi.read', $related->slug)
+                                        : (Route::has('detail-informasi.baca')
+                                            ? route('detail-informasi.baca', $related->slug)
+                                            : url('/detail-informasi/baca/' . $related->slug));
+                                @endphp
+                                <a href="{{ $relatedUrl }}" class="block group">
                                     <div class="flex gap-3">
                                         <div class="flex-shrink-0 mt-1">
                                             <div

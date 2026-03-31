@@ -84,7 +84,7 @@
                         $isUtama = is_null($opd->parent_id) ? 'true' : 'false';
 
                         // 2. Logic Gambar MinIO
-                        $logoUrl = asset('images/logo.png'); // Default Fallback
+                        $logoUrl = asset('images/office-building.png'); // Default Fallback
 
                         if (!empty($opd->images)) {
                             try {
@@ -95,7 +95,7 @@
                                 );
                             } catch (\Exception $e) {
                                 // Fallback jika gagal konek MinIO
-                                $logoUrl = asset('images/logo.png');
+                                $logoUrl = asset('images/office-building.png');
                             }
                         }
                     @endphp
@@ -122,7 +122,7 @@
                                 <img src="{{ $logoUrl }}" alt="Logo {{ $opd->nama_perangkat_daerah }}"
                                     class="w-full h-full object-contain transform group-hover:scale-110 transition-transform duration-300"
                                     {{-- Fallback ke default jika gambar rusak --}}
-                                    onerror="this.onerror=null; this.src='{{ asset('images/logo.png') }}';">
+                                    onerror="this.onerror=null; this.src='{{ asset('images/office-building.png') }}';">
 
                             </div>
                         </div>
@@ -149,7 +149,7 @@
                     {{-- EMPTY STATE BUMD --}}
                     <div class="col-span-full text-center py-16">
                         <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-green-50 mb-4">
-                            <img src="{{ asset('images/logo.png') }}" class="w-12 h-auto drop-shadow-sm" alt="Empty">
+                            <img src="{{ asset('images/office-building.png') }}" class="w-12 h-auto drop-shadow-sm" alt="Empty">
                         </div>
                         <h3 class="text-lg font-bold text-gray-700">Data Tidak Ditemukan</h3>
                         <p class="text-gray-500 mt-1 text-sm">Belum ada data BUMD yang tersedia saat ini.</p>

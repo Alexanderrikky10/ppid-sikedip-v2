@@ -25,7 +25,7 @@ class Responden extends Model
         'created_at' => 'datetime',
     ];
 
-    // Relasi ke jawaban survey
+    // Relasi ke jawaban survey 
     public function jawabanSurveys()
     {
         return $this->hasMany(JawabanSurvey::class, 'responden_id');

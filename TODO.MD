@@ -40,8 +40,8 @@ Target: Mengubah tampilan dari Form standar menjadi Tabel dengan fitur _Toggle F
 ### 5. urutan menu (`halaman admin  `)
 
 - [✅] sesuaikan tmapilan halaman admin untuk urutan dari menu
-- [] perbaiki chart di halaman admin
-- [] sesuaikan lagi tampilan atua cek lagi satu persatu menu di halaman admin
+- [] perbaiki chart di halaman admin dan tambahkan (tambahkan untuk stat jumlah informasi berdasarkan kategori masing masing tidak lupa untuk tambahkan total dowload )
+- [] sesuaikan lagi tampilan atau cek lagi satu persatu menu di halaman admin
 
 ### 6. penyusunan logika untuk visitor (`logika di bagian penguna user   `)
 
@@ -51,5 +51,5 @@ Target: Mengubah tampilan dari Form standar menjadi Tabel dengan fitur _Toggle F
 ### 7. membuat halaman penguna staff (`membuat menu untuk staff  `)
 
 - [] buat menu untuk tampilan dari staff panel
-- []
+- [✅] perbaiki modal di halaman user
 - []

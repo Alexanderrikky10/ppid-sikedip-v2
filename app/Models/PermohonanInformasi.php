@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class PermohonanInformasi extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, LogsActivity;
     //
     protected $fillable = [
         'no_registrasi',
@@ -30,11 +32,22 @@ class PermohonanInformasi extends Model
         'status',
     ];
 
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['nama_pemohon', 'no_identitas', 'status']) // kolom yang direkam
+            ->logOnlyDirty()  // hanya rekam yang berubah
+            ->dontSubmitEmptyLogs()
+            ->setDescriptionForEvent(fn(string $eventName) => "Permohonan Informasi di-{$eventName}");
+    }
+
+    // relasi dengan model perangkat daerah 
     public function perangkatDaerah()
     {
         return $this->belongsTo(PerangkatDaerah::class, 'perangkat_daerah_id');
     }
 
+    //relasi dengan model keberatan informasi
     public function keberatanInformasi()
     {
         return $this->hasMany(KeberatanInformasi::class, 'permohonan_informasi_id');
