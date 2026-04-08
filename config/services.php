@@ -35,4 +35,20 @@ return [
         ],
     ],
 
+    // 🔑 Keycloak SSO
+    'keycloak' => [
+        'base_url' => env('KEYCLOAK_BASE_URL'),
+        'realms' => env('KEYCLOAK_REALM'),
+        'client_id' => env('KEYCLOAK_CLIENT_ID'),
+        'client_secret' => env('KEYCLOAK_CLIENT_SECRET'),
+        'redirect' => env('KEYCLOAK_REDIRECT_URI'),
+    ],
+
+    'onetalk' => [
+        'api_key' => 'b58c932005912214a3a3b4196f2d35b89ed53cd38b5c66f470cfa2de1db2828f',
+        'api_url' => env('ONETALK_API_URL'),
+        'channel_id' => env('ONETALK_CHANNEL_ID'),
+        'phone_number_id' => env('ONETALK_PHONE_NUMBER_ID'),
+    ],
+
 ];

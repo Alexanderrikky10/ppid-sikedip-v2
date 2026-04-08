@@ -48,7 +48,7 @@
                         class="px-6 py-3 bg-black text-white font-semibold rounded shadow hover:bg-gray-800 transition text-center text-sm sm:text-base w-full sm:w-auto">
                         Beranda
                     </a>
-                    <a href="#"
+                    <a href="{{ route('sso.redirect') }}"
                         class="px-6 py-3 bg-transparent border border-gray-400 text-gray-800 font-semibold rounded hover:bg-gray-200 transition text-center text-sm sm:text-base w-full sm:w-auto">
                         Login and Register
                     </a>

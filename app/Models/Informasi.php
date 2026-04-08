@@ -2,16 +2,18 @@
 
 namespace App\Models;
 
-use App\Models\PerangkatDaerah;
-use App\Models\KlasifikasiInformasi;
 use App\Models\KategoriJenisInformasi;
+use App\Models\KlasifikasiInformasi;
+use App\Models\PerangkatDaerah;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Informasi extends Model
 {
     //
-    use SoftDeletes;
+    use SoftDeletes, LogsActivity;
 
     protected $fillable = [
         'tahun',
@@ -34,6 +36,15 @@ class Informasi extends Model
         'views_count',
         'downloads_count',
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['judul_informasi', 'ringkasan', 'penjelasan']) // kolom yang direkam
+            ->logOnlyDirty()  // hanya rekam yang berubah
+            ->dontSubmitEmptyLogs()
+            ->setDescriptionForEvent(fn(string $eventName) => "Informasi di-{$eventName}");
+    }
 
     public function perangkatDaerah()
     {

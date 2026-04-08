@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\SSOController;
 use App\Http\Controllers\Beranda\BerandaUserController;
 use App\Http\Controllers\Cetak\CetakInformasiController;
 use App\Http\Controllers\DaftarInformasi\DaftarInformasiBumdController;
@@ -23,6 +25,9 @@ use Illuminate\Support\Facades\Route;
 // wecome page route
 Route::get('/', [WelcomePageController::class, 'welcome'])
     ->name('welcome.page');
+
+//login route
+Route::get('/manuallogin', [LoginController::class, 'showLoginForm']);
 
 // beranda user route
 Route::get('/beranda', [BerandaUserController::class, 'index'])
@@ -96,3 +101,12 @@ Route::get('/cetak-informasi/excel', [CetakInformasiController::class, 'download
     ->name('cetak.informasi.excel');
 
 // admin routes for testing 
+
+//sso routes
+Route::controller(SSOController::class)->prefix('sso')->name('sso.')->group(function () {
+    Route::get('/redirect', 'redirect')->name('redirect');
+    Route::get('/callbacksso', 'callback')->name('callback'); // URL di route tetap 'callbacksso'
+    Route::post('/auth/sso/logout', 'logout')->name('logout'); // URL di route tetap '/auth/sso/logout'
+});
+
+

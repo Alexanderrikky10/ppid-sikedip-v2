@@ -22,7 +22,7 @@ Target: Mengubah tampilan dari Form standar menjadi Tabel dengan fitur _Toggle F
 - [✅] buat tampilan untuk sub sertakan logo
 - [✅] buat tampilan untuk pemkab/kota
 - [✅] buat tampilan untuk bumd
-- [ ] tambahkan logo di masing masing halaman detail antara bumd dan juga pemprov
+- [✅] tambahkan logo di masing masing halaman detail antara bumd dan juga pemprov
 
 ### 3. halaman laporan dan analisis (`halaman user`)
 
