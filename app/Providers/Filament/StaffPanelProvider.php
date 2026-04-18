@@ -7,6 +7,7 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\MenuItem; // Tambahkan import ini
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -17,6 +18,7 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class StaffPanelProvider extends PanelProvider
@@ -26,9 +28,30 @@ class StaffPanelProvider extends PanelProvider
         return $panel
             ->id('staff')
             ->path('staff')
+            ->brandLogo(new HtmlString('
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <img 
+                        src="' . asset('images/logo.png') . '" 
+                        alt="SIKEDIP Logo" 
+                        style="height: 2.5rem; width: auto;"
+                    > 
+                    <span style="font-size: 1.25rem; font-weight: 600; color: #1f2937;">
+                        SIKEDIP 
+                    </span>
+                </div>
+            '))
             ->colors([
                 'primary' => Color::Amber,
             ])
+            // Kustomisasi Auth: Menggunakan rute logout buatan sendiri
+            ->authGuard('web')
+            ->userMenuItems([
+                'logout' => MenuItem::make()
+                    ->label('Keluar Sistem')
+                    ->icon('heroicon-o-arrow-left-on-rectangle')
+                    ->url(fn(): string => route('logout')),
+            ])
+            // Resources & Pages Staff
             ->discoverResources(in: app_path('Filament/Staff/Resources'), for: 'App\\Filament\\Staff\\Resources')
             ->discoverPages(in: app_path('Filament/Staff/Pages'), for: 'App\\Filament\\Staff\\Pages')
             ->pages([
@@ -39,6 +62,7 @@ class StaffPanelProvider extends PanelProvider
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
             ])
+            // Middleware Standar
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -50,8 +74,9 @@ class StaffPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
+            // Middleware Proteksi
             ->authMiddleware([
-                    // Authenticate::class,
+                Authenticate::class,
                 RoleControlMiddleware::class,
             ]);
     }

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\PerangkatDaerahResource\Pages;
 use Filament\Forms;
 use Filament\Tables;
 use Filament\Forms\Form;
@@ -9,7 +10,6 @@ use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use App\Models\PerangkatDaerah;
 use Filament\Resources\Resource;
-use App\Filament\Resources\PerangkatDaerahResource\Pages;
 
 
 class PerangkatDaerahResource extends Resource

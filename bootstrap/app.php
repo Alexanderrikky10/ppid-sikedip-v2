@@ -4,6 +4,7 @@ use App\Http\Middleware\RoleControlMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Support\Facades\Route;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -15,7 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
         //
         $middleware->trustProxies(at: '*');
         $middleware->web(append: [
-            App\Http\Middleware\TrackVisitor::class, 
+            App\Http\Middleware\TrackVisitor::class,
         ]);
         $middleware->alias([
             'role_control' => RoleControlMiddleware::class,

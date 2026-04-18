@@ -1,4 +1,4 @@
-@extends('layout-app.layout-welcome-page.app')
+@extends('layout-welcome-page.app')
 
 @section('content')
 
@@ -45,11 +45,11 @@
                 {{-- Tombol --}}
                 <div class="flex flex-col sm:flex-row gap-3 w-full justify-center mb-8">
                     <a href="{{ route('beranda.index') }}"
-                        class="px-6 py-3 bg-black text-white font-semibold rounded shadow hover:bg-gray-800 transition text-center text-sm sm:text-base w-full sm:w-auto">
+                        class="px-6 py-3 bg-emerald-500 text-white font-semibold rounded shadow hover:bg-emerald-600 transition text-center text-sm sm:text-base w-full sm:w-auto">
                         Beranda
                     </a>
-                    <a href="{{ route('sso.redirect') }}"
-                        class="px-6 py-3 bg-transparent border border-gray-400 text-gray-800 font-semibold rounded hover:bg-gray-200 transition text-center text-sm sm:text-base w-full sm:w-auto">
+                    <a href="{{ route('login') }}"
+                        class="px-6 py-3 bg-transparent border border-emerald-500 text-emerald-600 font-semibold rounded hover:bg-emerald-50 transition text-center text-sm sm:text-base w-full sm:w-auto">
                         Login and Register
                     </a>
                 </div>

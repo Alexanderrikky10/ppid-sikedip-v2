@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\KeberatanInformasiResource\Pages;
 use Filament\Forms;
 use Filament\Tables;
 use Filament\Forms\Get;
@@ -13,7 +14,6 @@ use App\Models\KeberatanInformasi;
 use App\Models\PermohonanInformasi;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\KeberatanInformasiResource\Pages;
 
 
 class KeberatanInformasiResource extends Resource

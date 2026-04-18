@@ -17,7 +17,7 @@ class Informasi extends Model
 
     protected $fillable = [
         'tahun',
-        'perangkat_daerah_id', // opd_id diubah menjadi perangkat_daerah_id
+        'perangkat_daerah_id', // diubah menjadi perangkat_daerah_id
         'klasifikasi_informasi_id', //klasifikasi_informasi_id
         'kategori_jenis_informasi_id', //kategori_jenis_id informasi
         'kategori_informasi_id',

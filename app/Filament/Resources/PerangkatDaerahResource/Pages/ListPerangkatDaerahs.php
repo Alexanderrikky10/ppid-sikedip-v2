@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\PerangkatDaerahResource\Pages;
 
 use App\Filament\Resources\PerangkatDaerahResource;
+use App\Filament\Resources\PerangkatDaerahResource\Widgets\PerangkatDaerahStats;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
@@ -14,6 +15,13 @@ class ListPerangkatDaerahs extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
+        ];
+    }
+
+    public function getHeaderWidgets(): array
+    {
+        return [
+            PerangkatDaerahStats::class,
         ];
     }
 }

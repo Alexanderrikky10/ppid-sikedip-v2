@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\BerandaAdminController;
+use App\Http\Controllers\Admin\InformasiPemprovController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\SSOController;
 use App\Http\Controllers\Beranda\BerandaUserController;
@@ -27,7 +29,16 @@ Route::get('/', [WelcomePageController::class, 'welcome'])
     ->name('welcome.page');
 
 //login route
-Route::get('/manuallogin', [LoginController::class, 'showLoginForm']);
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+//sso routes
+Route::controller(SSOController::class)->prefix('sso')->name('sso.')->group(function () {
+    Route::get('/redirect', 'redirect')->name('redirect');
+    Route::get('/callbacksso', 'callback')->name('callback'); // URL di route tetap 'callbacksso'
+    Route::post('/auth/sso/logout', 'logout')->name('logout'); // URL di route tetap '/auth/sso/logout'
+});
 
 // beranda user route
 Route::get('/beranda', [BerandaUserController::class, 'index'])
@@ -99,14 +110,4 @@ Route::get('/cetak-informasi/pdf', [CetakInformasiController::class, 'downloadPd
 
 Route::get('/cetak-informasi/excel', [CetakInformasiController::class, 'downloadExcel'])
     ->name('cetak.informasi.excel');
-
-// admin routes for testing 
-
-//sso routes
-Route::controller(SSOController::class)->prefix('sso')->name('sso.')->group(function () {
-    Route::get('/redirect', 'redirect')->name('redirect');
-    Route::get('/callbacksso', 'callback')->name('callback'); // URL di route tetap 'callbacksso'
-    Route::post('/auth/sso/logout', 'logout')->name('logout'); // URL di route tetap '/auth/sso/logout'
-});
-
 

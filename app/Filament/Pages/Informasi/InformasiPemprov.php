@@ -2,21 +2,22 @@
 
 namespace App\Filament\Pages\Informasi;
 
-use Filament\Forms;
-use Filament\Tables;
-use Filament\Forms\Form;
-use Filament\Pages\Page;
+use App\Filament\Widgets\InformasiPemprovStats;
 use App\Models\Informasi;
-use Filament\Tables\Table;
-use Illuminate\Support\Str;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Tables\Contracts\HasTable;
-use Filament\Notifications\Notification;
+use Filament\Forms;
 use Filament\Forms\Components\FileUpload;
-use Illuminate\Database\Eloquent\Builder;
-use Filament\Tables\Enums\ActionsPosition;
 use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Form;
+use Filament\Notifications\Notification;
+use Filament\Pages\Page;
+use Filament\Tables;
 use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Enums\ActionsPosition;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 
 class InformasiPemprov extends Page implements HasForms, HasTable
 {
@@ -42,9 +43,13 @@ class InformasiPemprov extends Page implements HasForms, HasTable
         $this->resetForm();
     }
 
-    // ==========================================
-    // 1. KONFIGURASI TABEL
-    // ==========================================
+    public function getHeaderWidgets(): array
+    {
+        return [
+            InformasiPemprovStats::class,
+        ];
+    }
+
     public function table(Table $table): Table
     {
         return $table
@@ -52,7 +57,6 @@ class InformasiPemprov extends Page implements HasForms, HasTable
                 // Filter hanya data Pemprov
                 Informasi::query()->where('kategori_informasi_id', $this->kategoriInformasiId)
             )
-            // 👇 MEMINDAHKAN AKSI KE KIRI (Before Columns)
             ->actionsPosition(ActionsPosition::BeforeColumns)
 
             ->columns([
@@ -86,6 +90,7 @@ class InformasiPemprov extends Page implements HasForms, HasTable
                     ->color('warning')
                     ->wrap(),
             ])
+            ->paginated([10, 25, 50])
             ->filters([
                 Tables\Filters\SelectFilter::make('tahun')
                     ->options(array_combine(range(now()->year, 2017), range(now()->year, 2017))),
@@ -119,9 +124,6 @@ class InformasiPemprov extends Page implements HasForms, HasTable
             ]);
     }
 
-    // ==========================================
-    // 2. SCHEMA FORM (Reusable)
-    // ==========================================
     public function getFormSchema(): array
     {
         return [
@@ -232,9 +234,6 @@ class InformasiPemprov extends Page implements HasForms, HasTable
         ];
     }
 
-    // ==========================================
-    // 3. LOGIKA PAGE & FORM HANDLER
-    // ==========================================
 
     public function form(Form $form): Form
     {
