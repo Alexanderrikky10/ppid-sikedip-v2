@@ -203,7 +203,7 @@ class InformasiPemprov extends Page implements HasForms, HasTable
                                 ->default(now()->year),
 
                             Forms\Components\Select::make('perangkat_daerah_id')
-                                ->label('OPD')
+                                ->label('Perangkat Daerah')
                                 ->relationship(
                                     name: 'perangkatDaerah',
                                     titleAttribute: 'nama_perangkat_daerah',

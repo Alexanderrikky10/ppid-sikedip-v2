@@ -12,7 +12,7 @@ use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\Navigation\MenuItem; 
+use Filament\Navigation\MenuItem;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -29,6 +29,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            ->databaseNotifications()
             // LOGO & BRANDING
             ->brandLogo(new HtmlString('
                 <div style="display: flex; align-items: center; gap: 0.5rem;">
@@ -43,7 +44,7 @@ class AdminPanelProvider extends PanelProvider
                 </div>
             '))
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Green,
             ])
             ->authGuard('web')
             ->userMenuItems([

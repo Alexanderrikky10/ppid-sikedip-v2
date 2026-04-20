@@ -47,7 +47,7 @@
                     <li><a href="#" class="hover:text-green-400 transition-colors">Beranda</a></li>
                     <li><a href="#" class="hover:text-green-400 transition-colors">Tentang Kami</a></li>
                     <li><a href="#" class="hover:text-green-400 transition-colors">FAQ</a></li>
-                    <li><a href="#" class="hover:text-green-400 transition-colors">Syarat & Ketentuan</a></li>
+                    <li><a href="{{ route('tata-cara-layanan-informasi') }}" class="hover:text-green-400 transition-colors">Syarat & Ketentuan</a></li>
                     <li><a href="#" class="hover:text-green-400 transition-colors">Kebijakan Privasi</a></li>
                 </ul>
                 <ul class="space-y-4 text-sm text-green-100/70">

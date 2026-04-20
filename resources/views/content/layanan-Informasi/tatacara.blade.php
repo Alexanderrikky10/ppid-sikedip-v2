@@ -231,14 +231,7 @@
         </div>
     </section>
 
-    {{-- Call to Action --}}
-    <section class="py-12 bg-green-900 text-center">
-        <div class="container mx-auto px-6">
-            <h3 class="text-2xl font-bold text-white mb-4">Siap Mengajukan Permohonan?</h3>
-            <a href="{{ route('permohonan-informasi') }}"
-                class="inline-flex items-center px-8 py-3 bg-white text-green-800 hover:bg-green-50 rounded-lg font-bold transition-colors duration-300 shadow-lg">
-                <i class="fa-solid fa-paper-plane mr-2"></i> Isi Formulir Online
-            </a>
-        </div>
-    </section>
+    {{-- include footer --}}
+    @include('layout-app.app.footer')
+
 @endsection

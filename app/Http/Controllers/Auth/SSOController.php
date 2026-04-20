@@ -48,6 +48,7 @@ class SSOController extends Controller
                 'email' => $keycloakUser->getEmail(),
                 'nip' => $keycloakUser->user['nip'] ?? null,
                 'role' => $userRole,
+                'is_active' => true, // Set aktif untuk pengguna SSO
             ]
         );
 

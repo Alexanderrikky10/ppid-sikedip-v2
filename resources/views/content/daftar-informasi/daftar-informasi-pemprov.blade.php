@@ -138,6 +138,9 @@
     </div>
 </section>
 
+{{-- include footer --}}
+@include('layout-app.app.footer')
+
 @include('content.daftar-informasi.popup-informasi')
 
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>

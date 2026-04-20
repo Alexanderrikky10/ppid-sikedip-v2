@@ -133,4 +133,7 @@
         </div>
     </section>
 
+    {{-- include footer --}}
+    @include('layout-app.app.footer')
+
 @endsection

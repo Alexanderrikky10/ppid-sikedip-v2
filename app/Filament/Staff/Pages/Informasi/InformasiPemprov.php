@@ -33,6 +33,11 @@ class InformasiPemprov extends Page implements HasForms, HasTable
     // Properti Data Form
     public ?array $data = [];
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()?->perangkatDaerah?->kategori_informasi_id === 1;
+    }
+
     // State untuk menyembunyikan/menampilkan form
     public bool $showForm = false;
 

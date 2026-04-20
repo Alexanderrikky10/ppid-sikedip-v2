@@ -114,6 +114,9 @@
                 {{-- INCLUDE POPUP --}}
                 @include('content.daftar-informasi.popup-informasi')
 
+                {{-- ingclude footer --}}
+                @include('layout-app.app.footer')
+
                 {{-- SCRIPTS --}}
                 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
                 <script>

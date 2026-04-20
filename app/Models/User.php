@@ -19,7 +19,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
-        'image', 
+        'image',
         'password',
         'role',
         'nip',
@@ -27,6 +27,7 @@ class User extends Authenticatable
         'perangkat_daerah_id',
         'daerah',
         'biro',
+        'is_active',
         'keycloak_id',
     ];
 
@@ -37,6 +38,7 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
+        'is_active',
         'remember_token',
     ];
 

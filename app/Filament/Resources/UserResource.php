@@ -2,17 +2,20 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Forms;
-use Filament\Tables;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Filament\Resources\Resource;
 use App\Filament\Resources\UserResource\Pages;
+use App\Models\KategoriInformasi;
+use App\Models\PerangkatDaerah;
+use App\Models\User;
+use Filament\Forms;
+use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use App\Models\User;
-use App\Models\PerangkatDaerah;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Table;
 use Illuminate\Support\Facades\Hash;
+// Import tambahan untuk Notifikasi
+use Filament\Notifications\Notification;
 
 class UserResource extends Resource
 {
@@ -42,10 +45,8 @@ class UserResource extends Resource
 
                                 Forms\Components\TextInput::make('nip')
                                     ->label('NIP')
-                                    ->required()
                                     ->placeholder('Masukkan NIP tanpa spasi atau karakter khusus')
                                     ->maxLength(255),
-
 
                                 Forms\Components\TextInput::make('email')
                                     ->email()
@@ -64,9 +65,9 @@ class UserResource extends Resource
 
                                 Forms\Components\FileUpload::make('image')
                                     ->label('Foto Profil')
-                                    ->disk('minio') // Simpan di disk 'minio'
+                                    ->disk('minio')
                                     ->directory('user-avatars')
-                                    ->acceptedFileTypes(['image/jpeg', 'image/png']) // Hanya izinkan JPG dan PNG
+                                    ->acceptedFileTypes(['image/jpeg', 'image/png'])
                                     ->image()
                                     ->imageEditor()
                                     ->maxSize(2048)
@@ -74,10 +75,11 @@ class UserResource extends Resource
                                     ->columnSpanFull()
                                     ->visibility('private'),
                             ])
-                            ->columns(2), // Bagian dalam section ini dibagi 2 kolom
+                            ->columns(2),
                     ])
-                    ->columnSpan(['lg' => 2]), // Grup utama ini mengambil 2 dari 3 kolom grid
+                    ->columnSpan(['lg' => 2]),
 
+                // GRUP KANAN - 1 Kolom
                 Forms\Components\Group::make()
                     ->schema([
                         Forms\Components\Section::make('Hak Akses & Organisasi')
@@ -88,64 +90,62 @@ class UserResource extends Resource
                                     ->required()
                                     ->options([
                                         'admin' => 'Administrator',
-                                        'staff' => 'Staff', 
+                                        'staff' => 'Staff',
                                     ])
                                     ->native(false)
                                     ->default('staff'),
 
-
-                                // DROPDOWN 1: KATEGORI FILTER (VIRTUAL)
-                                Forms\Components\Select::make('hak_akses') 
+                                // DROPDOWN 1: KATEGORI FILTER - options dari KategoriInformasi, value = id
+                                Forms\Components\Select::make(' ')
                                     ->label('Kategori Hak Akses')
-                                    ->options([
-                                        'Pemprov' => 'Pemprov',
-                                        'Kab/Kota' => 'Kab/Kota',
-                                        'Perangkat daerah' => 'Perangkat daerah',
-                                        'BUMD' => 'BUMD',
-                                    ])
-                                    ->live() 
-                                    ->afterStateUpdated(fn(Set $set) => $set('perangkat_daerah_id', null)) // Kosongkan pilihan PD jika kategori ganti
+                                    ->options(function (): array {
+                                        return KategoriInformasi::pluck('nama_kategori', 'id')->all();
+                                    })
+                                    ->live()
+                                    ->afterStateUpdated(fn(Set $set) => $set('perangkat_daerah_id', null))
                                     ->native(false)
-                                    ->placeholder('Pilih Kategori Dahulu...'),
+                                    ->placeholder('Pilih Kategori Dahulu...')
+                                    ->required(),
 
+                                // DROPDOWN 2: PERANGKAT DAERAH - filter by kategori_informasi_id
                                 Forms\Components\Select::make('perangkat_daerah_id')
                                     ->label('Perangkat Daerah')
                                     ->options(function (Get $get): array {
-                                        $kategori = $get('hak_akses');
-                                        if (!$kategori) {
+                                        $kategoriId = $get('hak_akses');
+
+                                        if (!$kategoriId) {
+                                            return [];
                                         }
-                                        return PerangkatDaerah::where('kategori_perangkat_daerah', $kategori)
+
+                                        return PerangkatDaerah::where('kategori_informasi_id', $kategoriId)
                                             ->pluck('nama_perangkat_daerah', 'id')
                                             ->all();
                                     })
                                     ->searchable()
                                     ->native(false)
-                                    ->required() 
+                                    ->required()
                                     ->afterStateHydrated(function (Set $set, ?User $record) {
-                                        // Jika ada record (mode edit) dan user punya relasi perangkatDaerah
+                                        // Saat edit, set nilai hak_akses berdasarkan kategori dari perangkat daerah user
                                         if ($record && $record->perangkatDaerah) {
-                                            // Set nilai 'kategori_filter' berdasarkan data dari relasi
-                                            $set('kategori_filter', $record->perangkatDaerah->kategori_perangkat_daerah);
+                                            $set('hak_akses', $record->perangkatDaerah->kategori_informasi_id);
                                         }
                                     }),
-
 
                                 Forms\Components\TextInput::make('daerah')
                                     ->label('Daerah')
                                     ->maxLength(100)
-                                    ->placeholder(' Kabupaten Sintang, Kota singkawang, dll.')
-                                    ->required(),
+                                    ->placeholder('Kabupaten Sintang, Kota Singkawang, dll.'),
 
                                 Forms\Components\TextInput::make('biro')
                                     ->label('Biro')
-                                    ->maxLength(100)
-                                    ->required(),
+                                    ->maxLength(100),
+
                             ])
-                            ->columns(1), 
+                            ->columns(1),
                     ])
-                    ->columnSpan(['lg' => 1]), 
+                    ->columnSpan(['lg' => 1]),
             ])
-        ->columns(3); // Seluruh form menggunakan grid 3 kolom
+            ->columns(3);
     }
 
     public static function table(Table $table): Table
@@ -156,9 +156,21 @@ class UserResource extends Resource
                     ->label('Foto')
                     ->disk('minio')
                     ->visibility('private'),
+
                 Tables\Columns\TextColumn::make('name')
-                    ->label('Nama Panggilan')
+                    ->label('Nama Lengkap')
                     ->searchable(),
+
+                // Indikator Status (Opsional tapi membantu visual)
+                Tables\Columns\IconColumn::make('is_active')
+                    ->label('Status')
+                    ->boolean()
+                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('nip')
+                    ->label('NIP')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('email')
                     ->searchable(),
@@ -167,21 +179,21 @@ class UserResource extends Resource
                     ->badge()
                     ->color(fn(string $state): string => match ($state) {
                         'admin' => 'danger',
-                        'staff' => 'warning', // Disesuaikan dengan form
+                        'staff' => 'warning',
                         default => 'gray',
                     }),
 
-                Tables\Columns\TextColumn::make('perangkatDaerah.nama_perangkat_daerah') // Tampilkan nama dari relasi
+                Tables\Columns\TextColumn::make('perangkatDaerah.nama_perangkat_daerah')
                     ->label('Perangkat Daerah')
                     ->sortable()
                     ->searchable(),
 
-                // Menampilkan Kategori di tabel (Opsional tapi bagus)
-                Tables\Columns\TextColumn::make('perangkatDaerah.kategori_perangkat_daerah')
-                    ->label('Kategori PD')
+                Tables\Columns\TextColumn::make('perangkatDaerah.kategoriInformasi.nama_kategori')
+                    ->label('Kategori')
                     ->sortable()
                     ->searchable()
-                    ->badge(),
+                    ->badge()
+                    ->color('info'),
 
                 Tables\Columns\TextColumn::make('daerah')
                     ->searchable()
@@ -207,13 +219,44 @@ class UserResource extends Resource
                         'admin' => 'Administrator',
                         'staff' => 'Staff',
                     ]),
+
                 Tables\Filters\SelectFilter::make('perangkat_daerah_id')
                     ->label('Perangkat Daerah')
                     ->relationship('perangkatDaerah', 'nama_perangkat_daerah')
-                    ->searchable() // Tambahkan searchable di filter
+                    ->searchable()
                     ->preload(),
             ])
             ->actions([
+                // AKSI 1: KONFIRMASI (Hanya muncul jika is_active = false)
+                Tables\Actions\Action::make('confirm')
+                    ->label('Konfirmasi Akun')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->visible(fn(User $record): bool => !$record->is_active)
+                    ->requiresConfirmation()
+                    ->action(function (User $record) {
+                        $record->update(['is_active' => true]);
+                        Notification::make()
+                            ->title('Akun berhasil diaktifkan')
+                            ->success()
+                            ->send();
+                    }),
+
+                // AKSI 2: NONAKTIFKAN (Hanya muncul jika is_active = true)
+                Tables\Actions\Action::make('deactivate')
+                    ->label('Nonaktifkan Akun')
+                    ->icon('heroicon-o-x-circle')
+                    ->color('danger')
+                    ->visible(fn(User $record): bool => (bool) $record->is_active)
+                    ->requiresConfirmation()
+                    ->action(function (User $record) {
+                        $record->update(['is_active' => false]);
+                        Notification::make()
+                            ->title('Akun berhasil dinonaktifkan')
+                            ->warning()
+                            ->send();
+                    }),
+
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
@@ -226,9 +269,7 @@ class UserResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array

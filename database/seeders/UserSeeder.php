@@ -20,11 +20,19 @@ class UserSeeder extends Seeder
                 [
                     'name' => 'Administrator',
                     'email' => 'admin@gmail.com',
-                    'password' => Hash::make('password'), // ganti dengan password aman
+                    'password' => Hash::make('password'),
+                    'role' => 'admin',
                     'created_at' => now(),
                     'updated_at' => now(),
                 ],
-
+                [
+                    'name' => 'staff',
+                    'email' => 'staff@gmail.com',
+                    'password' => Hash::make('password'),
+                    'role' => 'staff',
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ],
 
             ],
 

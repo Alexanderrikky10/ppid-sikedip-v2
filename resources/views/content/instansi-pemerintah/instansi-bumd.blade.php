@@ -160,9 +160,9 @@
 
             {{-- PESAN PENCARIAN KOSONG --}}
             <div class="hidden text-center py-16" :class="{ '!block': 
-                                (search !== '' || activeTab !== '') && 
-                                $el.previousElementSibling.querySelectorAll('a[style*=\'display: none\']').length === $el.previousElementSibling.children.length 
-                            }">
+                                        (search !== '' || activeTab !== '') && 
+                                        $el.previousElementSibling.querySelectorAll('a[style*=\'display: none\']').length === $el.previousElementSibling.children.length 
+                                    }">
                 <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
                     <i class="fa-solid fa-filter text-gray-400 text-2xl"></i>
                 </div>
@@ -178,5 +178,7 @@
 
         </div>
     </section>
+    {{-- include footer --}}
+    @include('layout-app.app.footer')
 
 @endsection

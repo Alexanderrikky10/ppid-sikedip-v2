@@ -28,6 +28,7 @@ class StaffPanelProvider extends PanelProvider
         return $panel
             ->id('staff')
             ->path('staff')
+            ->databaseNotifications()
             ->brandLogo(new HtmlString('
                 <div style="display: flex; align-items: center; gap: 0.5rem;">
                     <img 
@@ -60,7 +61,6 @@ class StaffPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Staff/Widgets'), for: 'App\\Filament\\Staff\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
             ])
             // Middleware Standar
             ->middleware([
