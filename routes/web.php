@@ -23,6 +23,7 @@ use App\Http\Controllers\LayananInformasi\SurveyKualitasController;
 use App\Http\Controllers\LayananInformasi\TataCaraController;
 use App\Http\Controllers\WelcomePage\WelcomePageController;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 
 // wecome page route
@@ -116,4 +117,3 @@ Route::get('/cetak-informasi/pdf', [CetakInformasiController::class, 'downloadPd
 
 Route::get('/cetak-informasi/excel', [CetakInformasiController::class, 'downloadExcel'])
     ->name('cetak.informasi.excel');
-

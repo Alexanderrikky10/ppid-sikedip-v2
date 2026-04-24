@@ -7,8 +7,6 @@ use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
-    //
-
     public function showLoginForm()
     {
         return view('auth.login');
@@ -17,10 +15,17 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         // Validasi input
-        $credentials = $request->validate([
+        $request->validate([
             'email' => ['required', 'email'],
-            'password' => ['required'],
+            'password' => ['required', 'min:6'],
+        ], [
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'password.required' => 'Password wajib diisi.',
+            'password.min' => 'Password minimal 6 karakter.',
         ]);
+
+        $credentials = $request->only('email', 'password');
 
         // Coba login dengan kredensial yang diberikan
         if (auth()->attempt($credentials)) {
@@ -33,15 +38,19 @@ class LoginController extends Controller
                 return redirect()->intended('/staff');
             } else {
                 auth()->logout();
-                return back()->withErrors([
-                    'email' => 'You are not authorized to access this area.',
-                ]);
+                return back()
+                    ->withInput($request->only('email'))
+                    ->withErrors([
+                        'email' => 'Anda tidak memiliki akses ke sistem ini.',
+                    ]);
             }
         }
 
-        return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ]);
+        return back()
+            ->withInput($request->only('email'))
+            ->withErrors([
+                'email' => 'Email atau password yang Anda masukkan salah.',
+            ]);
     }
 
     public function logout(Request $request)

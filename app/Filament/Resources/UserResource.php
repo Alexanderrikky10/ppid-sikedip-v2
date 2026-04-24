@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
-use App\Models\KategoriInformasi;
 use App\Models\PerangkatDaerah;
 use App\Models\User;
 use Filament\Forms;
@@ -14,7 +13,6 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Hash;
-// Import tambahan untuk Notifikasi
 use Filament\Notifications\Notification;
 
 class UserResource extends Resource
@@ -31,11 +29,14 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                // GRUP UTAMA (KIRI) - 2 Kolom
+                // =============================================
+                // GRUP KIRI - 2 Kolom
+                // =============================================
                 Forms\Components\Group::make()
                     ->schema([
                         Forms\Components\Section::make('Detail Pengguna')
                             ->description('Informasi dasar dan kredensial untuk pengguna.')
+                            ->icon('heroicon-o-user-circle')
                             ->schema([
                                 Forms\Components\TextInput::make('name')
                                     ->label('Nama Lengkap')
@@ -57,11 +58,28 @@ class UserResource extends Resource
 
                                 Forms\Components\TextInput::make('password')
                                     ->password()
-                                    ->dehydrateStateUsing(fn(string $state): string => Hash::make($state))
-                                    ->dehydrated(fn(?string $state): bool => filled($state))
-                                    ->required(fn(string $operation): bool => $operation === 'create')
+                                    ->dehydrateStateUsing(
+                                        fn(string $state): string => Hash::make($state)
+                                    )
+                                    ->dehydrated(
+                                        fn(?string $state): bool => filled($state)
+                                    )
+                                    ->required(
+                                        fn(string $operation): bool => $operation === 'create'
+                                    )
                                     ->maxLength(255)
-                                    ->helperText('Kosongkan jika tidak ingin mengubah password saat mengedit.'),
+                                    ->helperText(
+                                        'Kosongkan jika tidak ingin mengubah password saat mengedit.'
+                                    ),
+
+                                Forms\Components\TextInput::make('daerah')
+                                    ->label('Daerah')
+                                    ->maxLength(100)
+                                    ->placeholder('Kabupaten Sintang, Kota Singkawang, dll.'),
+
+                                Forms\Components\TextInput::make('biro')
+                                    ->label('Biro')
+                                    ->maxLength(100),
 
                                 Forms\Components\FileUpload::make('image')
                                     ->label('Foto Profil')
@@ -79,12 +97,16 @@ class UserResource extends Resource
                     ])
                     ->columnSpan(['lg' => 2]),
 
+                // =============================================
                 // GRUP KANAN - 1 Kolom
+                // =============================================
                 Forms\Components\Group::make()
                     ->schema([
                         Forms\Components\Section::make('Hak Akses & Organisasi')
                             ->description('Pengaturan peran dan organisasi pengguna.')
+                            ->icon('heroicon-o-shield-check')
                             ->schema([
+                                // Role
                                 Forms\Components\Select::make('role')
                                     ->label('Peran (Role)')
                                     ->required()
@@ -95,59 +117,106 @@ class UserResource extends Resource
                                     ->native(false)
                                     ->default('staff'),
 
-                                // DROPDOWN 1: KATEGORI FILTER - options dari KategoriInformasi, value = id
-                                Forms\Components\Select::make(' ')
+                                // Status Aktif
+                                Forms\Components\Toggle::make('is_active')
+                                    ->label('Status Akun Aktif')
+                                    ->default(false)
+                                    ->helperText('Aktifkan akun agar pengguna dapat login.')
+                                    ->onColor('success')
+                                    ->offColor('danger'),
+
+                                // =============================================
+                                // PERBAIKAN UTAMA:
+                                // Nama field diubah dari ' ' (spasi) 
+                                // menjadi 'kategori_filter'
+                                // =============================================
+                                Forms\Components\Select::make('kategori_filter')
                                     ->label('Kategori Hak Akses')
-                                    ->options(function (): array {
-                                        return KategoriInformasi::pluck('nama_kategori', 'id')->all();
-                                    })
+                                    ->options([
+                                        'Pemprov' => 'Pemprov',
+                                        'Kab/Kota' => 'Kab/Kota',
+                                        'BUMD' => 'BUMD',
+                                    ])
                                     ->live()
-                                    ->afterStateUpdated(fn(Set $set) => $set('perangkat_daerah_id', null))
                                     ->native(false)
                                     ->placeholder('Pilih Kategori Dahulu...')
-                                    ->required(),
+                                    ->required()
+                                    // Reset perangkat_daerah_id saat kategori berubah
+                                    ->afterStateUpdated(function (Set $set) {
+                                        $set('perangkat_daerah_id', null);
+                                    })
+                                    // Saat edit: isi otomatis dari kategori OPD user
+                                    ->afterStateHydrated(function (Set $set, ?User $record) {
+                                        if ($record && $record->perangkatDaerah) {
+                                            // Ambil nama kategori dari relasi
+                                            $set(
+                                                'kategori_filter',
+                                                $record->perangkatDaerah->kategoriInformasi?->nama_kategori
+                                            );
+                                        }
+                                    })
+                                    // Field ini tidak disimpan ke database
+                                    ->dehydrated(false),
 
-                                // DROPDOWN 2: PERANGKAT DAERAH - filter by kategori_informasi_id
+                                // =============================================
+                                // Perangkat Daerah
+                                // Filter berdasarkan kategori_filter
+                                // =============================================
                                 Forms\Components\Select::make('perangkat_daerah_id')
                                     ->label('Perangkat Daerah')
                                     ->options(function (Get $get): array {
-                                        $kategoriId = $get('hak_akses');
+                                        // Ambil nilai dari field 'kategori_filter'
+                                        $kategori = $get('kategori_filter');
 
-                                        if (!$kategoriId) {
+                                        if (blank($kategori)) {
                                             return [];
                                         }
 
-                                        return PerangkatDaerah::where('kategori_informasi_id', $kategoriId)
+                                        // Filter OPD berdasarkan nama kategori
+                                        return PerangkatDaerah::whereHas(
+                                            'kategoriInformasi',
+                                            fn($query) => $query->where('nama_kategori', $kategori)
+                                        )
+                                            ->orderBy('nama_perangkat_daerah')
                                             ->pluck('nama_perangkat_daerah', 'id')
-                                            ->all();
+                                            ->toArray();
                                     })
                                     ->searchable()
                                     ->native(false)
-                                    ->required()
-                                    ->afterStateHydrated(function (Set $set, ?User $record) {
-                                        // Saat edit, set nilai hak_akses berdasarkan kategori dari perangkat daerah user
-                                        if ($record && $record->perangkatDaerah) {
-                                            $set('hak_akses', $record->perangkatDaerah->kategori_informasi_id);
-                                        }
-                                    }),
+                                    ->live()
+                                    ->placeholder(
+                                        fn(Get $get): string => blank($get('kategori_filter'))
+                                        ? 'Pilih kategori terlebih dahulu...'
+                                        : 'Pilih Perangkat Daerah...'
+                                    )
+                                    ->helperText(
+                                        fn(Get $get): ?string => blank($get('kategori_filter'))
+                                        ? '⚠️ Pilih kategori hak akses terlebih dahulu'
+                                        : null
+                                    ),
 
-                                Forms\Components\TextInput::make('daerah')
-                                    ->label('Daerah')
-                                    ->maxLength(100)
-                                    ->placeholder('Kabupaten Sintang, Kota Singkawang, dll.'),
-
-                                Forms\Components\TextInput::make('biro')
-                                    ->label('Biro')
-                                    ->maxLength(100),
-
+                                // Hak Akses (array fitur yang bisa diakses)
+                                // Forms\Components\CheckboxList::make('hak_akses')
+                                //     ->label('Hak Akses Fitur')
+                                //     ->options([
+                                //         'permohonan_informasi' => 'Permohonan Informasi',
+                                //         'keberatan_informasi' => 'Keberatan Informasi',
+                                //         'laporan' => 'Laporan',
+                                //         'pengumuman' => 'Pengumuman',
+                                //     ])
+                                //     ->columns(1)
+                                //     ->helperText('Centang fitur yang dapat diakses oleh staff ini.'),
                             ])
-                            ->columns(1),
+                            ->columns(1),    
                     ])
                     ->columnSpan(['lg' => 1]),
             ])
             ->columns(3);
     }
 
+    // =========================================================
+    // TABLE
+    // =========================================================
     public static function table(Table $table): Table
     {
         return $table
@@ -155,28 +224,36 @@ class UserResource extends Resource
                 Tables\Columns\ImageColumn::make('image')
                     ->label('Foto')
                     ->disk('minio')
-                    ->visibility('private'),
+                    ->visibility('private')
+                    ->circular(),
 
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nama Lengkap')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable()
+                    ->weight('bold')
+                    ->description(fn(User $record): string => $record->nip ?? '-'),
 
-                // Indikator Status (Opsional tapi membantu visual)
                 Tables\Columns\IconColumn::make('is_active')
                     ->label('Status')
                     ->boolean()
+                    ->trueIcon('heroicon-o-check-circle')
+                    ->falseIcon('heroicon-o-x-circle')
+                    ->trueColor('success')
+                    ->falseColor('danger')
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('nip')
-                    ->label('NIP')
-                    ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-
                 Tables\Columns\TextColumn::make('email')
-                    ->searchable(),
+                    ->searchable()
+                    ->icon('heroicon-o-envelope'),
 
                 Tables\Columns\TextColumn::make('role')
                     ->badge()
+                    ->formatStateUsing(fn(string $state): string => match ($state) {
+                        'admin' => 'Administrator',
+                        'staff' => 'Staff',
+                        default => $state,
+                    })
                     ->color(fn(string $state): string => match ($state) {
                         'admin' => 'danger',
                         'staff' => 'warning',
@@ -186,7 +263,8 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('perangkatDaerah.nama_perangkat_daerah')
                     ->label('Perangkat Daerah')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->wrap(),
 
                 Tables\Columns\TextColumn::make('perangkatDaerah.kategoriInformasi.nama_kategori')
                     ->label('Kategori')
@@ -204,21 +282,25 @@ class UserResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->label('Dibuat')
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultSort('created_at', 'desc')
             ->filters([
                 Tables\Filters\SelectFilter::make('role')
+                    ->label('Peran')
                     ->options([
                         'admin' => 'Administrator',
                         'staff' => 'Staff',
                     ]),
+
+                Tables\Filters\TernaryFilter::make('is_active')
+                    ->label('Status Akun')
+                    ->trueLabel('Aktif')
+                    ->falseLabel('Tidak Aktif')
+                    ->placeholder('Semua'),
 
                 Tables\Filters\SelectFilter::make('perangkat_daerah_id')
                     ->label('Perangkat Daerah')
@@ -227,32 +309,44 @@ class UserResource extends Resource
                     ->preload(),
             ])
             ->actions([
-                // AKSI 1: KONFIRMASI (Hanya muncul jika is_active = false)
+                // Konfirmasi Akun (hanya jika belum aktif)
                 Tables\Actions\Action::make('confirm')
-                    ->label('Konfirmasi Akun')
+                    ->label('Aktifkan')
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
                     ->visible(fn(User $record): bool => !$record->is_active)
                     ->requiresConfirmation()
+                    ->modalHeading('Aktifkan Akun')
+                    ->modalDescription(
+                        fn(User $record) => 'Apakah Anda yakin ingin mengaktifkan akun ' . $record->name . '?'
+                    )
+                    ->modalSubmitActionLabel('Ya, Aktifkan')
                     ->action(function (User $record) {
                         $record->update(['is_active' => true]);
                         Notification::make()
-                            ->title('Akun berhasil diaktifkan')
+                            ->title('Akun Berhasil Diaktifkan')
+                            ->body($record->name . ' sekarang dapat login ke sistem.')
                             ->success()
                             ->send();
                     }),
 
-                // AKSI 2: NONAKTIFKAN (Hanya muncul jika is_active = true)
+                // Nonaktifkan Akun (hanya jika sudah aktif)
                 Tables\Actions\Action::make('deactivate')
-                    ->label('Nonaktifkan Akun')
+                    ->label('Nonaktifkan')
                     ->icon('heroicon-o-x-circle')
                     ->color('danger')
                     ->visible(fn(User $record): bool => (bool) $record->is_active)
                     ->requiresConfirmation()
+                    ->modalHeading('Nonaktifkan Akun')
+                    ->modalDescription(
+                        fn(User $record) => 'Apakah Anda yakin ingin menonaktifkan akun ' . $record->name . '?'
+                    )
+                    ->modalSubmitActionLabel('Ya, Nonaktifkan')
                     ->action(function (User $record) {
                         $record->update(['is_active' => false]);
                         Notification::make()
-                            ->title('Akun berhasil dinonaktifkan')
+                            ->title('Akun Berhasil Dinonaktifkan')
+                            ->body($record->name . ' tidak dapat login ke sistem.')
                             ->warning()
                             ->send();
                     }),
@@ -263,6 +357,42 @@ class UserResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+
+                    // Bulk Aktifkan
+                    Tables\Actions\BulkAction::make('bulk_activate')
+                        ->label('Aktifkan Terpilih')
+                        ->icon('heroicon-o-check-circle')
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->modalHeading('Aktifkan Akun Terpilih')
+                        ->modalDescription('Apakah Anda yakin ingin mengaktifkan semua akun yang dipilih?')
+                        ->modalSubmitActionLabel('Ya, Aktifkan Semua')
+                        ->action(function ($records) {
+                            $records->each(fn(User $record) => $record->update(['is_active' => true]));
+                            Notification::make()
+                                ->title('Akun Berhasil Diaktifkan')
+                                ->body($records->count() . ' akun berhasil diaktifkan.')
+                                ->success()
+                                ->send();
+                        }),
+
+                    // Bulk Nonaktifkan
+                    Tables\Actions\BulkAction::make('bulk_deactivate')
+                        ->label('Nonaktifkan Terpilih')
+                        ->icon('heroicon-o-x-circle')
+                        ->color('danger')
+                        ->requiresConfirmation()
+                        ->modalHeading('Nonaktifkan Akun Terpilih')
+                        ->modalDescription('Apakah Anda yakin ingin menonaktifkan semua akun yang dipilih?')
+                        ->modalSubmitActionLabel('Ya, Nonaktifkan Semua')
+                        ->action(function ($records) {
+                            $records->each(fn(User $record) => $record->update(['is_active' => false]));
+                            Notification::make()
+                                ->title('Akun Berhasil Dinonaktifkan')
+                                ->body($records->count() . ' akun berhasil dinonaktifkan.')
+                                ->warning()
+                                ->send();
+                        }),
                 ]),
             ]);
     }

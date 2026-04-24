@@ -50,13 +50,12 @@ Target: Mengubah tampilan dari Form standar menjadi Tabel dengan fitur _Toggle F
 
 ### 7. membuat halaman penguna staff (`membuat menu untuk staff  `)
 
-- [] buat menu untuk tampilan dari staff panel
+- [✅] buat menu untuk tampilan dari staff panel
 - [✅] perbaiki modal di halaman user
-- []
+- [] tambahkan notif ketika ada permohonan masuk
 
-
--- surat riset di tambahkan 
--- mita saran ke bulisna terkait ini implemenasi atau bagai mana 
+-- surat riset di tambahkan
+-- mita saran ke bulisna terkait ini implemenasi atau bagai mana
 
 tanggal 10 konsul judul sama pembimbing 1
 dan pembimbing 2
