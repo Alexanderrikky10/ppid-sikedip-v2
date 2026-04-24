@@ -13,3 +13,9 @@ Schedule::command('permohonan:auto-reject')
     ->timezone('Asia/Jakarta')
     ->withoutOverlapping()
     ->runInBackground();
+
+Schedule::command('keberatan:auto-reject')
+    ->dailyAt('00:00')
+    ->timezone('Asia/Jakarta')
+    ->withoutOverlapping()
+    ->runInBackground();

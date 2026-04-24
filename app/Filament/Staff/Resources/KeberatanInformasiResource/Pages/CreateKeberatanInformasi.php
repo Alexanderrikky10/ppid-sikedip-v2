@@ -3,7 +3,6 @@
 namespace App\Filament\Staff\Resources\KeberatanInformasiResource\Pages;
 
 use App\Filament\Staff\Resources\KeberatanInformasiResource;
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateKeberatanInformasi extends CreateRecord

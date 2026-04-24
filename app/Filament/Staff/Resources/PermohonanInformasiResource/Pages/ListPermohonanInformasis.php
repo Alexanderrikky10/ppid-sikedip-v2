@@ -3,6 +3,7 @@
 namespace App\Filament\Staff\Resources\PermohonanInformasiResource\Pages;
 
 use App\Filament\Staff\Resources\PermohonanInformasiResource;
+use App\Filament\Staff\Resources\PermohonanInformasiResource\Widgets\PermohonanInformasiStats;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
@@ -14,6 +15,13 @@ class ListPermohonanInformasis extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
+        ];
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            PermohonanInformasiStats::class,
         ];
     }
 }
